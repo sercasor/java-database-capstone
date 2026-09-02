@@ -213,3 +213,112 @@ _As a [patient], I want [to View my upcoming appointments ], so that [I can prep
 
 
 
+
+
+# Doctor user stories
+## Story 1
+**Title:**
+_As a [doctor], I want [View my appointment calendar], so that [I can stay organized]._
+
+**Acceptance Criteria:**
+
+1. Given a registered doctor with an active session, when they request their appointment agenda  a list of appointments will be displayed upon requesting Appointment Document in MongoDB via Spring Data MongoDB using Document modelling
+2. Given a registered doctor with an inactive session, login will be required to accecss this section. Hence, access will be denied until then
+3. Given any registered non-doctor user, when they try to access this section access will be forbidden and an error will inform users they need Doctor permissions to do so
+4. Given an unregistered user, signing up will be required to access this section so an error message and redirecting users to login portal will be needed
+
+**Priority:** [High]
+**Story Points:** [M]
+**Notes:**
+Keep Authorization in mind due to potential privacy threats
+
+## Story 2
+
+**Title:**
+_As a [doctor], I want [to Mark my unavailability], so that [I can inform patients only the available slots]._
+
+**Acceptance Criteria:**
+
+1. Given a registered doctor with an active session, when they specify their availability the corresponding MySQL table columns will be updated via JPA Entities
+2. Given a registered doctor with an inactive session, login will be prompted before accessing this section
+3. Given an unregistered doctor, signing up will be requested to an admin so an error message will be displayed with a link to the contact section.
+
+**Priority:** [High]
+**Story Points:** [L]
+**Notes:**
+
+
+## Story 3
+
+**Title:**
+_As a [doctor], I want [to Log into the portal], so that [I can manage my appointments]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they enter an valid username and password that matches a doctor credentials, then they should be redirected to the doctor dashboard.
+2. Given a registered user, when they enter an valid username and password that DOES NOT match doctor credentials, then they should be redirected to the appropiate dashboard according to their role. 
+3. Given a registered user, when they enter an incorrect password, then they should see an error message “Invalid username or password.”
+4. Given an unregistered user, when they attempt to log in, then they should see an error message “User does not exist.”
+5. Given a registered user, when entering a valid username and password, then a session should be created.
+. 
+
+**Priority:** [High]
+**Story Points:** [L]
+**Notes:**
+Authorization may be tricky
+
+
+## Story 4
+
+**Title:**
+_As a [doctor], I want [to Log out of the portal], so that [I protect my data]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they hit the log out button the session will be terminated, then they should be redirected to the Login portal.
+2. Given an unregistered user, when they attempt to log out, an error should be displayed in the remote first that they are able to see the "log out" button in the first place 
+3. Given an unregistered user, the "log out" button will be replaced by the "log in" one.
+
+
+**Priority:** [High]
+**Story Points:** [S]
+**Notes:**
+
+
+
+## Story 5
+
+**Title:**
+_As a [doctor], I want [Update my profile with specialization and contact information], so that [patients have up-to-date information]._
+
+**Acceptance Criteria:**
+
+1. Given a registered doctor with an active session, their info will be shown. In addition, a form will included so they can specify their specialization and contact information. Those details will be updated in the corresponding MySQL table columns via JPA Entities
+2. Given a registered doctor with an inactive session, login will be prompted before accessing this section
+3. Given an unregistered doctor, signing up will be requested to an admin so an error message will be displayed with a link to the contact section.
+
+
+**Priority:** [High]
+**Story Points:** [L]
+**Notes:**
+
+
+
+## Story 6
+
+**Title:**
+_As a [doctor], I want [to View the patient details for upcoming appointments], so that [I can prepare accordingly]._
+
+**Acceptance Criteria:**
+
+1. Given a registered doctor, when they consult their future appointments a list with the appointment details will be displayed only if the user has future appointments
+2. Given an unregistered user, the system will prompt them to login or sign up before listing their appointments
+3. Given no future appointments, when the data is displayed no past appointments will appear
+4. Given a registered user, when data is requested, Spring Data MongoDB will look up any appointments that match the criteria so only the appropiate ones are modeled to Document models and applied to the Thymeleaf template 
+5. Given a registered user whose role is NOT doctor, the system will redirect to the patient appointment section
+
+**Priority:** [High]
+**Story Points:** [M]
+**Notes:**
+
+
