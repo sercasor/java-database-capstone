@@ -105,3 +105,111 @@ _As an [admin], I want [to Run a stored procedure in MySQL CLI], so that [I get 
 
 
 
+
+# Patient user stories
+## Story 1
+**Title:**
+_As a [patient], I want [View a list of doctors without logging in], so that [I can explore options before registering]._
+
+**Acceptance Criteria:**
+
+1. Given any user, when they search for the doctor list a list will be displayed upon requesting Doctor table in MySQL via Spring Data JPA
+2. Given any user requesting the list of doctors, when the list is shown, signing up/in will be required to book an appointment
+
+**Priority:** [High]
+**Story Points:** [S]
+**Notes:**
+
+
+## Story 2
+
+**Title:**
+_As a [patient], I want [to Sign up using my email and password], so that [I can book appointments]._
+
+**Acceptance Criteria:**
+
+1. Given an registered user with an active session, no sign up/in button will be visible
+2. Given a unregistered user, when they enter a valid email, a MySQL request will verify that email is not already existing in Client table
+3. Given an unregistered user, when they enter an invalid email, an error message will inform them a valid email is required and prompt them to enter one.
+4. Given an unregistered user, when they try to sign up, only the sign up form will be displayed
+5. Given a registered user with an inactive session, an authentication error message will be displayed, thus asking them to login instead.
+6. Given a newly registered user, a new record will be added to the User table via Spring Data JPA
+
+**Priority:** [High]
+**Story Points:** [XL]
+**Notes:**
+
+
+## Story 3
+
+**Title:**
+_As a [patient], I want [to Log into the portal], so that [I can manage my bookings]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they enter an valid username and password that matches a patient credentials, then they should be redirected to the patient dashboard.
+2. Given a registered user, when they enter an valid username and password that DOES NOT match patient credentials, then they should be redirected to the appropiate dashboard according to their role. 
+3. Given a registered user, when they enter an incorrect password, then they should see an error message “Invalid username or password.”
+4. Given an unregistered user, when they attempt to log in, then they should see an error message “User does not exist.”
+5. Given a registered user, when entering a valid username and password, then a session should be created.
+. 
+
+**Priority:** [High]
+**Story Points:** [L]
+**Notes:**
+Authorization may be tricky
+
+
+## Story 4
+
+**Title:**
+_As a [patient], I want [to Log out of the portal], so that [secure my account]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they hit the log out button the session will be terminated, then they should be redirected to the Login portal.
+2. Given an unregistered user, when they attempt to log out, an error should be displayed in the remote first that they are able to see the "log out" button in the first place 
+3. Given an unregistered user, the "log out" button will be replaced by the "log in" one.
+
+
+**Priority:** [High]
+**Story Points:** [S]
+**Notes:**
+
+
+
+## Story 5
+
+**Title:**
+_As a [patient], I want [to Log in and book an hour-long appointment], so that [I can consult with a doctor]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they attempt to book an appointment, only available slots (consulted previously via MongoDB) will be displayed for them to choose
+2. Given an unregistered user, the system will prompt them to login or sign up before making an appointment
+
+**Priority:** [Medium]
+**Story Points:** [L]
+**Notes:**
+
+
+
+## Story 6
+
+**Title:**
+_As a [patient], I want [to View my upcoming appointments ], so that [I can prepare accordingly]._
+
+**Acceptance Criteria:**
+
+1. Given a registered user, when they consult their future appointments a list with the appointment details will be displayed only if the user previously requested an appointment
+2. Given an unregistered user, the system will prompt them to login or sign up before making an appointment
+3. Given no future appointments, when the data is displayed no past appointments will appear
+4. Given a registered user, when data is requested, Spring Data MongoDB will look up any appointments that match the criteria so only the appropiate ones are modeled to Document models and applied to the Thymeleaf template 
+
+**Priority:** [Medium]
+**Story Points:** [S]
+**Notes:**
+
+
+
+
