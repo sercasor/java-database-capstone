@@ -34,7 +34,7 @@ public class Doctor {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) //ensures that the password is not serialized in the response (hidden from the frontend)
     private String password;
 
-    @NotNull(message = "Doctor's password is required")
+    @NotNull(message = "Doctor's phone is required")
     @Pattern(regexp = "^[0-9]{10}$") //the phone number must be exactly 10 digits long
     private String phone;
 
