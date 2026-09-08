@@ -3,6 +3,8 @@ package com.project.back_end.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * System admins that have acces to manage the backend portal of the app.
@@ -11,7 +13,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class Admin {
-
+    
     /*-------------Private Attributes-------------*/
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
