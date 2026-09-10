@@ -93,12 +93,14 @@
     <version>0.12.6</version>
     <scope>runtime</scope>
 </dependency>
-<!--DEBUG: trying to make docker-compose work for MYSQL and MongoDB-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-docker-compose</artifactId>
-			<version>3.1.1</version>
-		</dependency>
+<!--DEBUG: spring-boot-docker-compose Not actually needed for now. Only required if we wanna skip docker compose up via just executing mvn spring-boot:run
+can override application.properties so proper research is needed should it be used-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-docker-compose</artifactId>-->
+<!--		</dependency>-->
+
+
 		</dependencies>
 
 	<build>
