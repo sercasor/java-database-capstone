@@ -12,7 +12,6 @@ public class Prescription {
 
     /*-------------Private attributes-------------*/
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id; // String is commonly used for IDs in MongoDB
 
     @NotNull(message = "Patient's name is required")
