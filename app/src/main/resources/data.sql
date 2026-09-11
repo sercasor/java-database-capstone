@@ -1,4 +1,4 @@
-/*--------------------------------SQL DATA--------------------------------*/
+-- --------------------------------SQL DATA--------------------------------*/
 
 INSERT INTO doctor (email, name, password, phone, specialty) VALUES
      ('dr.adams@example.com', 'Dr. Emily Adams', 'pass12345', '555-101-2020', 'Cardiologist'),
@@ -223,3 +223,4 @@ INSERT INTO appointment (appointment_time, status, doctor_id, patient_id) VALUES
 --INSERT admin table
 INSERT INTO admin (username, password)
 VALUES ('admin', 'admin@1234');
+
