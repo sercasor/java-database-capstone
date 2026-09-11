@@ -10,6 +10,98 @@ Prerequisites: the following programs must be installed:
 
 Copy the contents of .env.example to .env and replace the values with your own before executing  docker compose up. To do that, change directory to app/docker. When the containers are up, change directory again to app/ and execute mvn spring-boot:run. 
 
+#MYSQL PROCEDURES
+
+some procedures are used so you'll have to connect to MySQL CLI to create them. These are the procedures:
+
+DELIMITER $$
+
+CREATE PROCEDURE GetDailyAppointmentReportByDoctor(
+    IN report_date DATE
+)
+BEGIN
+    SELECT 
+        d.name AS doctor_name,
+        a.appointment_time,
+        a.status,
+        p.name AS patient_name,
+        p.phone AS patient_phone
+    FROM 
+        appointment a
+    JOIN 
+        doctor d ON a.doctor_id = d.id
+    JOIN 
+        patient p ON a.patient_id = p.id
+    WHERE 
+        DATE(a.appointment_time) = report_date
+    ORDER BY 
+        d.name, a.appointment_time;
+END$$
+
+DELIMITER ;
+
+
+<!--here's a sample call to test if the procedure is working. You may need to modify the date-->
+
+CALL GetDailyAppointmentReportByDoctor('2026-08-03');
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE GetDoctorWithMostPatientsByMonth(
+    IN input_month INT, 
+    IN input_year INT
+)
+BEGIN
+    SELECT
+        doctor_id, 
+        COUNT(patient_id) AS patients_seen
+    FROM
+        appointment
+    WHERE
+        MONTH(appointment_time) = input_month 
+        AND YEAR(appointment_time) = input_year
+    GROUP BY
+        doctor_id
+    ORDER BY
+        patients_seen DESC
+    LIMIT 1;
+END $$
+
+DELIMITER ;
+
+
+<!--here's a sample call to test if the procedure is working. You may need to modify the date-->
+
+CALL GetDoctorWithMostPatientsByMonth(9, 2026);
+
+
+DELIMITER $$
+
+CREATE PROCEDURE GetDoctorWithMostPatientsByYear(
+    IN input_year INT
+)
+BEGIN
+    SELECT
+        doctor_id, 
+        COUNT(patient_id) AS patients_seen
+    FROM
+        appointment
+    WHERE
+        YEAR(appointment_time) = input_year
+    GROUP BY
+        doctor_id
+    ORDER BY
+        patients_seen DESC
+    LIMIT 1;
+END $$
+
+DELIMITER ;
+
+<!--here's a sample call to test if the procedure is working. You may need to modify the date-->
+CALL GetDoctorWithMostPatientsByYear(2026);
+
 # MongoDB seeding
 As soon as springboot is running (mvn spring-boot:run) with no errors we'll connect to mongo shell (mongosh) using this command (if you change container name, this modification must be reflected below). Then, we'll enter our credentials.
 

@@ -223,4 +223,3 @@ INSERT INTO appointment (appointment_time, status, doctor_id, patient_id) VALUES
 --INSERT admin table
 INSERT INTO admin (username, password)
 VALUES ('admin', 'admin@1234');
-
