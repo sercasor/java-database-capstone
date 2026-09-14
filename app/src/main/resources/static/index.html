@@ -1,37 +1,72 @@
 <!-- index.html -->
-<!-- 
-
+<!-- comment above just for organizational purposes-->
+<!--
 Step-by-Step Explanation of `index.html`.
 This file allows users to select a role (Admin, Patient, Doctor) 
 and triggers modal-based login functionality.
 
-1. Label the File
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            Select your role - Java Capstone: A Clinic Management System for serious business owners
+        </title>
+        <link rel="icon" href="/assets/images/logo/logo.png"  />
+        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="/assets/css/index.css">
+        <link rel="stylesheet" href="/assets/css/style.css">
+        <script src="js/util.js" defer></script>
+        <script src="js/render.js" defer></script>
+        <script src="js/components/header.js" defer></script>
+        <script src="js/components/footer.js" defer></script>
+        <script src="js/components/modals.js" defer></script>
+        <script src="js/components/" defer></script>
+    </head>
+    <body>
 
-   * Add a comment at the very top to identify the file as `index.html`. This helps developers stay organized.
 
-2. Declare Document Type
+        <main class="main-content">
+            <!--MAIN CONTAINER: groups header, main, and footer sections logically-->
+            <div class="container">
+                <!--WRAPPER: groups sections-->
+                <div class="wrapper">
+                    <!--HEADER placeholder-->
+                    <div id="header">
 
-   * Use the declaration for HTML5 so browsers know how to render the page correctly.
+                    </div>
 
-3. Start the HTML Document
+                    <h2>Select Your Role</h2>
+                    <!--TODO: onclick handlers needed or document.addEventListener for dynamic role selection-->
+                    <button id="adminButtonSelection">Admin</button>
+                    <button id="doctorButtonSelection">Doctor</button>
+                    <button id="patientButtonSelection">Patient</button>
+                    <!--FOOTER placeholder-->
+                    <div id="footer">
 
-   * Begin the HTML structure and set the document language to English to improve accessibility and SEO `lang="en"`.
+                    </div>
+                    <!-- MODALS -->
+                    <!--modal that is hidden by default and appears when triggered by an event listener.
+                    The modal overlay is aimed towards popups (like login forms).
+                    Has a close button and  a dynamic content area-->
+                    <div id="modal" class="modal">
+                        <button id="closeModal">
+                        Close popup
+                        </button>
+                        <!--Modal Dynamic content area-->
+                        <div id="modal-body">
 
-4. Head Section (Metadata and Resources)
+                        </div>
+                    </div>
+                </div>
 
-   * Open the `<head>` section which contains settings and links that don’t show up visually.
-
-5. Set Character Encoding
-
-   * Specify UTF-8 encoding to support most global characters and symbols.
-
-6. Set the Page Title
-
-   * Give the page a name (e.g., "Select Role") that appears on the browser tab.
-
-7. Add a Favicon
-
-   * Link to an icon (like a logo) that will appear in the browser tab from the address `href="../assets/images/logo/Logo.png"`
+            </div>
+        </main>
+        <script type="module" src="/js/services/index.js" defer></script>
+    </body>
+</html>
+<!--
 
 8. Link Stylesheets
 
@@ -53,7 +88,7 @@ and triggers modal-based login functionality.
       `<script src="../js/render.js" defer></script>`
       `<script src="../js/components/header.js" defer></script>`
       `<script src="../js/components/footer.js" defer></script>`
-      
+
 10. Close the Head and Open the Body
 
     * Wrap up metadata and begin the visible page content.
@@ -61,6 +96,7 @@ and triggers modal-based login functionality.
 11. Create a Container
 
     * Add a main container to hold all page elements and apply layout constraints.
+
 
 12. Use a Wrapper for Structure
 
