@@ -39,6 +39,7 @@ h2{
     background-attachment: fixed;
 }
 
+/*---------------------------------buttons---------------------------------*/
 button{
     background-color: #015c5d; /*teal green*/
     color: white;
@@ -47,6 +48,13 @@ button{
     margin-top: 10px;
     cursor: pointer;
     font-size: 16px;
+    text-align: center;
+    border-radius: 25px;
+}
+
+/*TODO: DEBUG IF THIS CLASS IS ADEQUATELY CONFIGURED*/
+button.close{
+    display: none;
 }
 
 button:hover {
@@ -60,11 +68,123 @@ button:hover {
 .dashboard-btn:hover{
     background-color: #003e3e; /*dark teal green*/
 }
-/*
 
+/*TODO: ELEMENTS THAT REQUIRE SOME DEBUGGING*/
 
-**Dashboard Buttons (`.dashboard-btn`)**
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    flex-wrap: wrap; /* allows nav to drop a line in small devices (layout) */
+}
 
-* Use the same base green background (`#015c5d`) as the default button.
-* On hover, darken the background to deep teal (`#003e3e`) for visual feedback.
- */
+.header .logo img {
+    height: 40px; /* controls size without deforming it */
+    width: auto;
+}
+
+.nav-items {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.nav-items a,
+.nav-items button {
+    text-decoration: none;
+    font-size: 0.95rem;
+    white-space: nowrap; /* prevents  "Logout" and "Doctor Dashboard" from breaking/disappearing */
+}
+
+.footer {
+    display: flex;
+    justify-content: space-around; /* o space-between, depending on how many sections */
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.footer-section {
+    flex: 1 1 200px; /* grows or shrinks but never lower than  200px before line jump */
+    min-width: 150px;
+}
+
+.footer-section h4 {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    display: block;
+    text-decoration: none;
+    margin-bottom: 0.3rem;
+}
+
+.input-field {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-field:hover {
+    border-color: #999;
+}
+
+.input-field:focus {
+    outline: none; /* default is removed just because it's replaced thanks to border-color and box-shadow below */
+    border-color: #005fcc;
+    box-shadow: 0 0 0 3px rgba(0, 95, 204, 0.15);
+}
+
+/*Helps making  entity validation more visually appealing via @NotNull, @Size and such*/
+.input-field:invalid {
+    border-color: #e74c3c;
+}
+
+.select-dropdown {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.select-dropdown:hover {
+    border-color: #999;
+}
+
+.select-dropdown:focus {
+    outline: none;
+    border-color: #005fcc;
+    box-shadow: 0 0 0 3px rgba(0, 95, 204, 0.15);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    cursor: pointer;
+    accent-color: #005fcc; /* colors native check without rebuilding it from scratch */
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.checkbox-group input[type="checkbox"]:focus-visible {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+}
