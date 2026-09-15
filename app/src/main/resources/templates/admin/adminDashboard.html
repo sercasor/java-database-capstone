@@ -22,14 +22,21 @@
                 </div>
 <!--                contains search bar, filter section, dynamically-injected list of doctors-->
                 <main class="main-content">
-<!--                    searchbar, TODO: no <form> needed? DEBUG-->
+<!--                    searchbar, TODO: no <form> needed? add action as well DEBUG-->
 
-                    <form action="/action_page.php">
+                    <form action="#">
+
+
                         <input type="text" id="searchBar" placeholder="search by doctor name" />
-                        <label for="sorting">Sort by</label>
-                        <select name="sorting" id="sorting">
-                            <option value="time">Time</option>
-                            <option value="specialty">Specialty</option>
+                        <label for="timeSorting">Sort by Time</label>
+                        <select name="timeSorting" id="timeSorting">
+                            <option value="am">AM</option>
+                            <option value="pm">PM</option>
+                        </select>
+                        <label for="specialtySorting">Sort by Specialty</label>
+                        <select name="specialtySorting" id="specialtySorting">
+                            <option value="am">AM</option>
+                            <option value="pm">PM</option>
                         </select>
                         <!--TODO: STYLE THE SUBMIT/SEARCH BUTTON-->
                         <button type="submit"></button>
@@ -39,13 +46,22 @@
 
                     </div>
 
-                </main>
                 <!--Footer Placeholder-->
                 <div id="footer">
 
                 </div>
 
+                </main>
             </div>
         </div>
+        <!-- The hidden Modal -->
+        <div id="modal" class="modal">
+            <span id="closeModal" class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+
+        <script type="module" src="../../static/js/adminDashboard.js" defer></script>
+        <script type="module" src="../../static/js/doctorDashboard.js" defer></script>
+
     </body>
 </html>
