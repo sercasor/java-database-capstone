@@ -25,26 +25,34 @@
             </div>
 <!--            the central section of the dashboard-->
             <div class="main-content">
+<!--                Search bar and Filters -->
+                <input type="text" id="searchBar" class="searchBar" placeholder="Search Bar for custom output" />
+                <input type="text" id="todayButton" placeholder="Today" />
+                <input type="date" id="datePicker" name="datePicker">
+                <!--Results table-->
+                <table id="patientTable">
+<!--                    Used to specify the head of the table. Can be used in conjuction with tbody-->
+                    <thead id="patientTableHead">
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Prescription</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+
+                    </tbody>
+                    <!--Table rows dynamically added here-->
+                </table>
+                <!-- dynamically added Footer-->
+                <div id="footer">
+
+                </div>
+
 
             </div>
-            <!--                    searchbar, TODO: no <form> needed? add action as well DEBUG-->
-
-
-                <input type="text" id="searchBar" class="searchBar" placeholder="Search Bar for custom output" />
-                <input type="text" id="todayButton" class="searchBar" placeholder="Appointments for today" />
-
-
-
-                <label for="timeSorting">Sort by Time</label>
-                <select name="timeSorting" id="timeSorting">
-                    <option value="am">AM</option>
-                    <option value="pm">PM</option>
-                </select>
-                <label for="specialtySorting">Sort by Specialty</label>
-                <select name="specialtySorting" id="specialtySorting">
-                    <option value="am">AM</option>
-                    <option value="pm">PM</option>
-                </select>
 
         </div>
     </body>
