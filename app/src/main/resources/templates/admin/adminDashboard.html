@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />
-        <title>Admin dashboard: manage your details and appointments</title>
+        <title>Admin dashboard</title>
         <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
         <link rel="stylesheet" th:href="@{/assets/css/style.css}">
         <script th:src="@{/js/render.js}" defer></script>
@@ -24,7 +24,6 @@
                 <main class="main-content">
 <!--                    searchbar, TODO: no <form> needed? add action as well DEBUG-->
 
-                    <form action="#">
 
 
                         <input type="text" id="searchBar" placeholder="search by doctor name" />
@@ -38,9 +37,6 @@
                             <option value="am">AM</option>
                             <option value="pm">PM</option>
                         </select>
-                        <!--TODO: STYLE THE SUBMIT/SEARCH BUTTON-->
-                        <button type="submit"></button>
-                    </form>
                     <!--Dynamic content-->
                     <div id="content">
 
