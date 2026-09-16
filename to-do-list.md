@@ -1,4 +1,8 @@
 # Frontend
+
+**IMPORTANT** patientDashboard.html seems to be the original template so if there are issues, we can follow that
+
+
 create addEventListeners for index.html role selection buttons
 create addEventListeners for index.html modal section
 
@@ -23,3 +27,7 @@ Modal Styling:
 
     Ensure the modal is centered, hidden by default, and has smooth transitions
     Style inputs inside the modal form with padding and focus effects
+
+#global
+find a substitute for any <body onload="renderContent()">. Some examples are patientDashboard. I reckon all dashboards share a similar situation
+
