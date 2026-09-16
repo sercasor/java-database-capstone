@@ -13,19 +13,17 @@
         <script th:src="@{/js/components/footer.js}" defer></script>
     </head>
     <body>
-        <!--WRAPS EVERYTHING-->
+        <!--WRAPS EVERYTHING,  structures the page-->
         <div class="container">
+            <!--for structured layout control-->
             <div class="wrapper">
 <!--                dynamic header via header.js-->
                 <div id="header">
 
                 </div>
-<!--                contains search bar, filter section, dynamically-injected list of doctors-->
+<!--                semantic tag. Contains search bar, filter section, dynamically-injected list of doctors-->
                 <main class="main-content">
-<!--                    searchbar, TODO: no <form> needed? add action as well DEBUG-->
-
-
-
+<!--                    searchbar,  no <form> needed cause that would entail redirections, which can be skipped using JS-->
                         <input type="text" id="searchBar" placeholder="search by doctor name" />
                         <label for="timeSorting">Sort by Time</label>
                         <select name="timeSorting" id="timeSorting">

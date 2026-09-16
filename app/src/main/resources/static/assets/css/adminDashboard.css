@@ -38,19 +38,8 @@ body,html{
 
 /*---------------------------------BUTTON STYLES---------------------------------*/
 
-/*
 
-  * `background-color: #A62B1F` — sets a bold red color.
-  * `color: white` — makes text stand out.
-  * `border: none` — removes any outline/border.
-  * `border-radius: 12px` — creates rounded corners.
-  * `padding: 10px 20px` — gives space inside the button.
-  * `margin-top: 20px` — adds spacing above the button.
-  * `width: 200px` — ensures consistent button width.
-  * `cursor: pointer` — shows a hand icon on hover.
-  * `font-size: 16px` — makes the text readable.
 
-*/
 button{
     background-color: #A62B1F; /*red*/
     color: white;
@@ -76,17 +65,7 @@ button{
 .adminBtn:hover{
     color: #A62B1F;
 }
-/*
 
-  * `background-color: #f4f4f4` — uses a light grey background.
-  * `color: #333` — uses dark text for contrast.
-  * `font-weight: bold` — emphasizes text.
-  * `width: 110px` — smaller, compact width.
-  * `padding: 10px 0` — vertical padding only.
-  * `border: none` — clean look.
-  * `cursor: pointer` — indicates it's clickable.
-
-*/
 
 
 /*---------------------------------TEXT STYLES---------------------------------*/
