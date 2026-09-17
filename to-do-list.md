@@ -41,3 +41,6 @@ desarrollar las funciones y listeners para
            <button id="patientLogin" class="adminBtn">Login</button>
            <button id="patientSignup" class="adminBtn">Sign Up</button>`;
             break;
+#doctorCard.js
+
+finish this. To do that, research how alerts work (a conditional will be required), call the function that will be declared in the service (fix the import if need be)

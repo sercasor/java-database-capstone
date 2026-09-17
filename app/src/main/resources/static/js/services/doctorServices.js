@@ -51,3 +51,7 @@
 
    Catch any other errors, alert the user, and return a default empty result
 */
+
+export function deleteDoctor() {
+    return 1; //TODO: FINISH THE FUNCTION
+}
