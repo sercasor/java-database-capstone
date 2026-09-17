@@ -77,6 +77,8 @@ function renderHeader(){
 
 
 }
+//calling the function so it's executed as soons as the script is loaded when rendering the page
+renderHeader();
 
 function attachHeaderButtonListeners() {
     return 1; //function to be developed in the future in case onclick() attributes are replaced by listeners so this return will probably change
