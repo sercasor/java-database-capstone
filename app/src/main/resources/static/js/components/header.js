@@ -30,7 +30,7 @@ function renderHeader(){
     //initialize header content before adding specific content depending on the role
     let headerContent = `<header class="header">
          <div class="logo-section">
-           <img src="../assets/images/logo/logo.png" alt="Hospital CRM Logo" class="logo-img">
+           <img src="/assets/images/logo/logo.png" alt="Hospital CRM Logo" class="logo-img">
            <span class="logo-title">Hospital CMS</span>
          </div>
          <nav>`;
@@ -43,7 +43,7 @@ function renderHeader(){
         return;
     }
 
-    //Injects the appropriate header HTML into the variables (needs reassigning variable valuable via headerDiv.innerHTML=yaddayadda;
+    //Injects the appropriate header HTML into the String variable (needs reassigning variable valuable via headerDiv.innerHTML=yaddayadda;
     switch(role) {
         case "admin":
             headerContent += `
@@ -71,8 +71,33 @@ function renderHeader(){
 
     //inserts HTML code and listeners
     headerDiv.innerHTML = headerContent;
+    //TODO: do we need any listeners?
     attachHeaderButtonListeners();
 
-    //TODO: seguimos en "Attach Event Listeners because elements were dynamically created, you need to attach listeners after insertion." de las instrucciones
 
+
+}
+
+function attachHeaderButtonListeners() {
+    return 1; //function to be developed in the future in case onclick() attributes are replaced by listeners so this return will probably change
+}
+
+/**
+ * Ends sessions and redirects to homepage
+ */
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    alert("Session successfully ended. Come back soon.");
+    window.location.href = "/";
+}
+
+/**
+ * Ends session and redirects to patient dashboard after replacing userRole with "patient" (regular user)
+ */
+function logoutPatient() {
+    localStorage.setItem("userRole","patient"); //replaces the role
+    localStorage.removeItem("token");
+    alert("Session successfully ended. Come back soon.");
+    window.location.href = "'/pages/patientAppointments.html'";
 }

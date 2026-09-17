@@ -31,3 +31,13 @@ Modal Styling:
 #global
 find a substitute for any <body onload="renderContent()">. Some examples are patientDashboard. I reckon all dashboards share a similar situation
 
+
+#header.js
+desarrollar openModal()??
+
+desarrollar las funciones y listeners para 
+   case "patient":
+            headerContent += `
+           <button id="patientLogin" class="adminBtn">Login</button>
+           <button id="patientSignup" class="adminBtn">Sign Up</button>`;
+            break;
