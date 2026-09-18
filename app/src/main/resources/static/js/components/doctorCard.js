@@ -50,11 +50,20 @@ export function createDoctorCard(doctor){
         removeBtn.textContent = "Delete";
         removeBtn.addEventListener("click", async () => { //TODO: FINISH THIS FUNCTION
             // 1. Confirm deletion
-            // 2. Get token from localStorage
-            const token = localStorage.getItem("token");
-            // 3. Call API to delete
-            deleteDoctor(doctor.id); //DEBUG: MIGHT NEED DIFFERENT PARAMETERS
-            // 4. On success: remove the card from the DOM
+            if (window.confirm("Press OK if you are sure you want this doctor deleted")) {
+                // 2. Get token from localStorage
+                const token = localStorage.getItem("token");
+                // 3. Call API to delete
+                deleteDoctor(doctor.id); //DEBUG: MIGHT NEED DIFFERENT PARAMETERS
+                // 4. On success: remove the card from the DOM
+                card.remove();
+
+            } else {
+                console.log("Doctor deletion cancelled");
+            }
+
+
+
         });
     }
     else if (role === "patient") { //not logged-in
