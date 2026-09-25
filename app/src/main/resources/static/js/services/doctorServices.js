@@ -79,7 +79,7 @@ export async function filterDoctors(name, time, specialty) {
 
         if (response.ok) {
             const data = await response.json();
-            doctors=data.doctors; //  TODO: data.doctors might not be needed instead of data depending on backend response
+            doctors=data.doctors; //  TODO: data.doctors is needed instead of data due to  backend response in the form of {doctors:[]}
 
         } else {
             console.error("Filter error!");
