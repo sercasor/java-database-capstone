@@ -1,5 +1,7 @@
 package com.project.back_end.services;
 
+import java.util.Map;
+
 public class TokenService {
 // 1. **@Component Annotation**
 // The @Component annotation marks this class as a Spring component, meaning Spring will manage it as a bean within its application context.
@@ -38,6 +40,10 @@ public class TokenService {
 // - If the role or user does not exist, it returns false, indicating the token is invalid.
 // - The method gracefully handles any errors by returning false if the token is invalid or an exception occurs.
 // This ensures secure access control based on the user's role and their existence in the system.
-
+    //TODO: HAY QUE HACER EL METODO
+    public Map <String,String> validateToken(String token,String role){
+        Map map;
+        return map;
+    }
 
 }

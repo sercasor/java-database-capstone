@@ -1,5 +1,9 @@
 package com.project.back_end.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
+
 public class Service {
 // 1. **@Service Annotation**
 // The @Service annotation marks this class as a service component in Spring. This allows Spring to automatically detect it through component scanning
@@ -8,12 +12,17 @@ public class Service {
 // 2. **Constructor Injection for Dependencies**
 // The constructor injects all required dependencies (TokenService, Repositories, and other Services). This approach promotes loose coupling, improves testability,
 // and ensures that all required dependencies are provided at object creation time.
-
+    @Autowired
+    private TokenService tokenService;
 // 3. **validateToken Method**
 // This method checks if the provided JWT token is valid for a specific user. It uses the TokenService to perform the validation.
 // If the token is invalid or expired, it returns a 401 Unauthorized response with an appropriate error message. This ensures security by preventing
 // unauthorized access to protected resources.
+//TODO: HAY QUE HACER EL METODO
+public Map<String,String> validateToken(String token, String role){
 
+    return this.tokenService.validateToken(token,role);
+}
 // 4. **validateAdmin Method**
 // This method validates the login credentials for an admin user.
 // - It first searches the admin repository using the provided username.
