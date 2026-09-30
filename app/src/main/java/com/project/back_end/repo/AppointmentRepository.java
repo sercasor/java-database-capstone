@@ -36,7 +36,7 @@ public interface AppointmentRepository  extends JpaRepository<Appointment, Long>
             "LEFT JOIN FETCH a.patient p" +
             " WHERE d.id = :doctorId " +
             "AND LOWER(p.name)" +
-            "  LIKE LOWER(CONCAT('%', :patientName, '%'))" +
+            "  LIKE LOWER(CONCAT('%', :patientName, '%')) " +
             " AND a.appointmentTime BETWEEN :start AND :end")
     public List<Appointment>  findByDoctorIdAndPatient_NameContainingIgnoreCaseAndAppointmentTimeBetween(
             @Param("doctorId")Long doctorId,
