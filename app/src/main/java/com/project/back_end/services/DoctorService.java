@@ -1,5 +1,6 @@
 package com.project.back_end.services;
 
+import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.repo.AppointmentRepository;
@@ -8,8 +9,10 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -82,6 +85,82 @@ public class DoctorService {
 
 
     }
+    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+    //Used to save a NEW doctor record in the database
+    @Transactional
+    public int saveDoctor(Doctor doctor){
+        int result;
+        String message;
+        //Check if the doctor already exists by email
+        if (this.doctorRepository.findByEmail(doctor.getEmail())!=null){
+            message=String.format("Can't save new doctor. Email %s already exists in the database",doctor.getEmail());
+            logger.error(message);
+            return -1;
+
+        }
+        this.doctorRepository.save(doctor);
+        return 1;
+    }
+    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+    //Used to update an existing doctor record in the database
+    @Transactional
+    public int updateDoctor(Doctor doctor){
+        int result;
+        String message;
+        //Check if the doctor already exists by email
+        if (this.doctorRepository.findByEmail(doctor.getEmail())==null){
+            message=String.format("Doctor ID %d doesn't exist. Please, create one before updating it. ",doctor.getId());
+            logger.error(message);
+            return -1;
+
+        }
+        this.doctorRepository.save(doctor);
+        return 1;
+    }
+
+    //retrieves a list of all doctors
+    @Transactional
+    public List<Doctor> getDoctors(){
+        return this.doctorRepository.findAll();
+    }
+
+    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+    //Used to  delete doctor record by ID in the database
+    @Transactional
+    public int deleteDoctor(Doctor doctor){
+        int result;
+        String message;
+        //Check if the doctor already exists by email
+        if (this.doctorRepository.findByEmail(doctor.getEmail())==null){
+            message=String.format("Can't delete doctor with  ID %d since they don't exist. Please, create one before deleting it. ",doctor.getId());
+            logger.error(message);
+            return -1;
+
+        }
+        //delete all associated appointments and then delete the doctor
+        this.appointmentRepository.deleteAllByDoctorId(doctor.getId());
+        this.doctorRepository.delete(doctor);
+        return 1;
+    }
+
+    //validates a doctor's login credentials
+    @Transactional
+    public ResponseEntity<Map<String, String>> validateDoctor(Login login){//login object contains email and password
+        ResponseEntity<Map<String, String>> response;
+        String message; //value of the ResponseEntity <Map>. The key is "message"
+        Doctor doctor=doctorRepository.findByEmail(login.getIdentifier());
+
+        if (doctor.getPassword().equals(login.getPassword())&&doctor.getEmail().equals(login.getIdentifier())){
+            message="Doctor's email and/or password don't match login credentials";
+            return ResponseEntity.badRequest().body(Map.of("message", message));
+
+        }
+
+
+
+    }
+
+
 
 
 
