@@ -166,9 +166,85 @@ public class DoctorService {
     @Transactional
     public Map<String, Object> findDoctorByName(String name){
 
-        return Map.of("doctors",this.doctorRepository.findByNameLike(name)); //TODO: finish with values
+        return Map.of("doctors",this.doctorRepository.findByNameLike(name));
+    }
+    //Returns a map with the  list of doctors (filtered by name, specialty, and availability during AM/PM)
+    @Transactional
+    public Map<String, Object> filterDoctorsByNameSpecialtyandTime(String name, String specialty,String amOrPm){
+
+        List<Doctor> unFilteredDoctors;
+        List<Doctor> filteredDoctors;
+        Map<String, Object>  result=new HashMap<>();
+        List<LocalTime> amTimes=new ArrayList<>();
+        List<LocalTime> pmTimes=new ArrayList<>();
+        unFilteredDoctors=doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name,specialty);
+        filteredDoctors=this.amPMDoctorsSorted(unFilteredDoctors,amOrPm);
+        return Map.of("doctors",Optional.of(filteredDoctors) );
+
     }
 
+    /*-----------------------------PRIVATE METHODS-----------------------------*/
+    private List<Doctor> amPMDoctorsSorted(List<Doctor> unFilteredDoctors, String amOrPm){
+        List<Doctor> filteredDoctors=new ArrayList<>();
+
+        for (Doctor doctor:unFilteredDoctors){
+            List<LocalTime> availableTimes=this.timeBracketSplitter(doctor.getAvailableTimes());
+            for (LocalTime slot:availableTimes){
+                if (amOrPm.equalsIgnoreCase("am")){
+                    if (slot.isBefore(LocalTime.NOON)){
+                        filteredDoctors.add(doctor);
+                    }
+
+                }else if(amOrPm.equalsIgnoreCase("pm")) {
+                    if (slot.isAfter(LocalTime.NOON)){
+                        filteredDoctors.add(doctor);
+                    }
+
+                }
+                else {
+                    throw new IllegalArgumentException("Illegal parameter: function needs 'am' or 'pm'");
+                }
+
+
+            }
+        }
+        return filteredDoctors;
+
+    }
+
+    /**
+     * Utility function that splits a List<String> availableTimes and returns a LocalTime
+     * @param availableTimes Doctor's availability property expressed in Strings separated by a hyphen. Tipically retrieved using Doctor's getter. input are brackets such as "09:00-10:00" and output is 09:00
+     * @return List<LocalTime> with all time slots without any hyphen
+     */
+    private List<LocalTime> timeBracketSplitter(List<String> availableTimes){
+        List<LocalTime> slotList=new ArrayList<>();
+        for (String bracket :availableTimes){ //bracket is a String with a divider, a slot is turned to LocalDateTime object
+            String[] slots=bracket.split("-");
+            slotList.add(LocalTime.parse(slots[0]));
+            slotList.add(LocalTime.parse(slots[1]));
+
+
+        }
+        return slotList;
+
+    }/**
+     * Utility function that splits a List<String> availableTimes and returns a String
+     * @param availableTimes Doctor's availability property expressed in Strings separated by a hyphen. Tipically retrieved using Doctor's getter. input are brackets such as "09:00-10:00" and output is 09:00
+     * @return List<String> with all time slots without any hyphen
+     */
+    private List <String> timeBracketSplitterToString(List<String> availableTimes){
+        List<String> slotList=new ArrayList<>();
+        for (String bracket :availableTimes){ //bracket is a String with a divider, a slot is turned to LocalDateTime object
+            String[] slots=bracket.split("-");
+            slotList.add(slots[0]);
+            slotList.add(slots[1]);
+
+
+        }
+        return slotList;
+
+    }
 
 
 
