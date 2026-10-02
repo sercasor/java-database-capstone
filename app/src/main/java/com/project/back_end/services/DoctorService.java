@@ -163,6 +163,12 @@ public class DoctorService {
 
     }
 
+    @Transactional
+    public Map<String, Object> findDoctorByName(String name){
+
+        return Map.of("doctors",this.doctorRepository.findByNameLike(name)); //TODO: finish with values
+    }
+
 
 
 
