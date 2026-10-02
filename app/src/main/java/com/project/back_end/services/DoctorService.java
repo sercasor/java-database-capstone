@@ -85,8 +85,11 @@ public class DoctorService {
 
 
     }
-    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
-    //Used to save a NEW doctor record in the database
+    /**
+     * Used to save a NEW doctor record in the database
+     * @param doctor Doctor object
+     * @return Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+     */
     @Transactional
     public int saveDoctor(Doctor doctor){
         int result;
@@ -101,8 +104,11 @@ public class DoctorService {
         this.doctorRepository.save(doctor);
         return 1;
     }
-    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
-    //Used to update an existing doctor record in the database
+    /**
+     * Used to update an existing doctor record in the database
+     * @param doctor Doctor object
+     * @return Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+     */
     @Transactional
     public int updateDoctor(Doctor doctor){
         int result;
@@ -118,14 +124,23 @@ public class DoctorService {
         return 1;
     }
 
-    //retrieves a list of all doctors
+
+
+    /**
+     * retrieves a list of all doctors
+     * @return List of DOctor objects
+     */
     @Transactional
     public List<Doctor> getDoctors(){
         return this.doctorRepository.findAll();
     }
 
-    //Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
-    //Used to  delete doctor record by ID in the database
+
+    /**
+     * Used to  delete doctor record by ID in the database
+     * @param doctor Doctor object
+     * @return Returns 1 for success, -1 if the doctor already exists, 0 for internal errors
+     */
     @Transactional
     public int deleteDoctor(Doctor doctor){
         int result;
@@ -143,16 +158,22 @@ public class DoctorService {
         return 1;
     }
 
-    //validates a doctor's login credentials
+
+
+    /**
+     * validates a doctor's login credentials
+     * @param login login object contains email and password
+     * @return An HTTP message with either a 200 code or a 400 one
+     */
     @Transactional
-    public ResponseEntity<Map<String, String>> validateDoctor(Login login){//login object contains email and password
+    public ResponseEntity<Map<String, String>> validateDoctor(Login login){
         ResponseEntity<Map<String, String>> response;
         String message; //value of the ResponseEntity <Map>. The key is "message"
         Doctor doctor=doctorRepository.findByEmail(login.getIdentifier());
 
         if (doctor.getPassword().equals(login.getPassword())&&doctor.getEmail().equals(login.getIdentifier())){
             message="Doctor is valid: Doctor's email and password  match login credentials";
-            return ResponseEntity.badRequest().body(Map.of("message", message));
+            return ResponseEntity.ok().body(Map.of("message", message));
 
         }else{
             message="Doctor's email and/or password don't match login credentials";
@@ -163,25 +184,121 @@ public class DoctorService {
 
     }
 
+    /**
+     * finds doctors by their name (case-sensitive)
+     * @param name Doctor's name
+     * @return Map  containing a List of Doctors as value
+     */
     @Transactional
     public Map<String, Object> findDoctorByName(String name){
 
         return Map.of("doctors",this.doctorRepository.findByNameLike(name));
     }
     //Returns a map with the  list of doctors (filtered by name, specialty, and availability during AM/PM)
+
+    /**
+     * filters doctors by name, specialty, and availability during AM/PM
+     * @param name Doctor's name
+     * @param specialty Doctor's specialty
+     * @param amOrPm Doctor's availability, Must specify "am" or "pm" (case-insensitive)
+     * @return Map  containing a List of Doctors as value
+     */
     @Transactional
     public Map<String, Object> filterDoctorsByNameSpecialtyandTime(String name, String specialty,String amOrPm){
 
-        List<Doctor> unFilteredDoctors;
-        List<Doctor> filteredDoctors;
-        Map<String, Object>  result=new HashMap<>();
-        List<LocalTime> amTimes=new ArrayList<>();
-        List<LocalTime> pmTimes=new ArrayList<>();
-        unFilteredDoctors=doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name,specialty);
-        filteredDoctors=this.amPMDoctorsSorted(unFilteredDoctors,amOrPm);
-        return Map.of("doctors",Optional.of(filteredDoctors) );
+        try {
+            List<Doctor> unFilteredDoctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
+            List<Doctor> filteredDoctors = this.amPMDoctorsSorted(unFilteredDoctors, amOrPm);
+            return Map.of("doctors", filteredDoctors);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid parameter in filterDoctorsByNameSpecialtyandTime: {}", e.getMessage());
+            return Map.of("error", e.getMessage());
+        }
 
     }
+    //Returns a map with the  list of doctors (filtered by name, and availability during AM/PM)
+
+    /**
+     * filters doctors by name and their availability during AM/PM
+     * @param name Doctor's name
+     * @param amOrPm Doctor's availability, Must specify "am" or "pm" (case-insensitive)
+     * @return Map  containing a List of Doctors as value
+     */
+    @Transactional
+    public Map<String, Object> filterDoctorByNameAndTime(String name,String amOrPm){
+
+        try {
+            List<Doctor> unFilteredDoctors = doctorRepository.findByNameLike(name);
+            List<Doctor> filteredDoctors = this.amPMDoctorsSorted(unFilteredDoctors, amOrPm);
+            return Map.of("doctors", filteredDoctors);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid parameter in filterDoctorByNameAndTime: {}", e.getMessage());
+            return Map.of("error", e.getMessage());
+        }
+
+    }
+
+    /**
+     * Finds doctor that match a name and specialty. This method is caps insensitive for both parameters
+     * @param name Doctor's name
+     * @param specialty Doctor's specialty
+     * @return Map  containing a List of Doctors as value
+     */
+    @Transactional
+    public Map<String, Object> filterDoctorByNameAndSpecialty(String name, String specialty){
+        return Map.of("Doctors",doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name,specialty));
+    }
+
+    /**
+     * filters doctors by specialty and their availability during AM/PM
+     * @param amOrPm Doctor's availability, Must specify "am" or "pm" (case-insensitive)
+     * @param specialty Doctor's specialty
+     * @return
+     */
+    @Transactional
+    public Map<String, Object> filterDoctorByTimeAndSpecialty(String amOrPm, String specialty){
+        try {
+            List<Doctor> unFilteredDoctors = doctorRepository.findBySpecialtyIgnoreCase(specialty);
+            List<Doctor> filteredDoctors = this.amPMDoctorsSorted(unFilteredDoctors, amOrPm);
+            return Map.of("doctors", filteredDoctors);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid parameter in filterDoctorByTimeAndSpecialty: {}", e.getMessage());
+            return Map.of("error", e.getMessage());
+        }
+
+    }
+
+    /**
+     * filters doctors by specialty (caps insensitive)
+     * @param specialty Doctor's specialty
+     * @return Map that contains a List of Doctors filtered by specialty
+     */
+    @Transactional
+    public Map<String, Object> filterDoctorBySpecialty(String specialty){
+        return Map.of("Doctors",doctorRepository.findBySpecialtyIgnoreCase(specialty));
+    }
+
+    /**
+     * Filters doctors by their availability during AM/PM
+     * @param amOrPm Doctor's availability, Must specify "am" or "pm" (case-insensitive)
+     * @return Map  containing a List of Doctors as value
+     */
+    @Transactional
+    public Map<String, Object> filterDoctorByTime(String amOrPm){
+        try {
+            List<Doctor> unFilteredDoctors = doctorRepository.findAll();
+            List<Doctor> filteredDoctors = this.amPMDoctorsSorted(unFilteredDoctors, amOrPm);
+            return Map.of("doctors", filteredDoctors);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid parameter in filterDoctorByTime: {}", e.getMessage());
+            return Map.of("error", e.getMessage());
+        }
+
+    }
+
+
+
+
 
     /*-----------------------------PRIVATE METHODS-----------------------------*/
     private List<Doctor> amPMDoctorsSorted(List<Doctor> unFilteredDoctors, String amOrPm){
