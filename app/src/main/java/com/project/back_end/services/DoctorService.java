@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DoctorService {
@@ -32,35 +31,53 @@ public class DoctorService {
 
     /*-----------------------------PUBLIC METHODS-----------------------------*/
 
-    //TODO: como hacemos esto? los appointments indican las citas que ya tenemos, así que todo availableTime del Doctor que coincida con la hora de un appointment esya descartado.
-    // Pero habria que traducir la hora a LocalDateTime tipo LocalDateTime.of("10:00") pero sin datos hardcodeados tras iterar el available time del Doctor (sacarlo con repo) y compararlo con el LocalDateTime de la List de appointments mediante doctorAppointments.contains()
     @Transactional
     public List<String> getDoctorAvailability(Long doctorId, LocalDate date){
         Optional<Doctor> doctorOptional=this.doctorRepository.findById(doctorId);
         List<Appointment> doctorAppointments;
-        List<String> availableTimes;
+        Set<LocalDateTime> bookedSlots= new HashSet<>(); //from Appointment.appointmentTime
+        Set<LocalDateTime> availableSlots= new HashSet<>(); //from Doctor.availability --> formated
+        List<String> availableTimes; //from Doctor.availability (unformated)
+        Set<LocalDateTime> freeSlotsFiltered = new HashSet<>(); //filtered
         Doctor doctor;
         LocalDateTime startDate = LocalDateTime.of(date, LocalTime.MIDNIGHT);
         LocalDateTime endDate = LocalDateTime.of(date, LocalTime.MAX);
+        List<String> result=new ArrayList<>();
 
-        if (doctorOptional.isEmpty()){
-            logger.error("Error when getting doctor's availability, null value");
-
+        if (doctorOptional.isEmpty()) {
+            logger.error("Doctor not found with ID: {}", doctorId);
+            return Collections.emptyList();
         }
 
+        //all booked slots (appointments are always either scheduled or completed) are placed in a Set
         doctorAppointments=this.appointmentRepository.findByDoctorIdAndAppointmentTimeBetween(doctorId, startDate, endDate);
         for (Appointment appointment:doctorAppointments) {
+            bookedSlots.add(appointment.getAppointmentTime());
 
-            appointmentStatus=appointment.getStatus();
         }
 
-        availableTimes
+        //all free slots are retrieved and converted to LocalDateTime to compare them with the booked slots in order to filter them out (to get available ones only)
+        availableTimes=doctorOptional.get().getAvailableTimes(); // output are brackets such as "09:00-10:00"
+        for (String bracket :availableTimes){ //bracket is a String with a divider, a slot is turned to LocalDateTime object
+            String[] slots=bracket.split("-");
+            availableSlots.add(LocalDateTime.parse(slots[0]));
+            availableSlots.add(LocalDateTime.parse(slots[1]));
 
+        }
 
+        //freeSlots is filled with all the times that are actually free upon Collection comparison
+        for(LocalDateTime slot :availableSlots){
+            if(!bookedSlots.contains(slot)){
+                freeSlotsFiltered.add(slot); //the result but not in order
+            }
+        }
 
-
-
-
+        //An ordered List is returned
+        for (LocalDateTime freeSlot : freeSlotsFiltered) {
+            result.add(Integer.toString(freeSlot.getHour()));
+        }
+        Collections.sort(result);
+        return result;
 
 
 
