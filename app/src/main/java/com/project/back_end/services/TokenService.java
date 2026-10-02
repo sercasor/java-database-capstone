@@ -30,7 +30,10 @@ public class TokenService {
 // - The token is first verified using the signing key to ensure it hasn’t been tampered with.
 // - After verification, the token is parsed, and the subject (which represents the email) is extracted.
 // This method allows the application to retrieve the user's identity (email) from the token for further use.
-
+//TODO: HAY QUE HACER EL METODO
+    public String extractEmail(String token){
+    return "";
+}
 // 6. **validateToken Method**
 // This method validates whether a provided JWT token is valid for a specific user role (admin, doctor, or patient).
 // - It first extracts the email from the token using the `extractEmail()` method.
