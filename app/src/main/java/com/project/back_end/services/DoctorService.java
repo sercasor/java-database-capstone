@@ -151,9 +151,12 @@ public class DoctorService {
         Doctor doctor=doctorRepository.findByEmail(login.getIdentifier());
 
         if (doctor.getPassword().equals(login.getPassword())&&doctor.getEmail().equals(login.getIdentifier())){
-            message="Doctor's email and/or password don't match login credentials";
+            message="Doctor is valid: Doctor's email and password  match login credentials";
             return ResponseEntity.badRequest().body(Map.of("message", message));
 
+        }else{
+            message="Doctor's email and/or password don't match login credentials";
+            return ResponseEntity.badRequest().body(Map.of("message", message));
         }
 
 
