@@ -99,23 +99,33 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
         }
     }
 
-    //This method validates whether an appointment is available based on the doctor's schedule.
+    //This method validates whether an appointment is available based on the doctor's schedule. It's important for ensuring patients are scheduled only during valid time slots.
     //1 if the appointment time is valid
     //0 if the time is unavailable
     //-1 if the doctor doesn't exist
     public int validateAppointment(Appointment appointment){
-    Optional<Doctor> doctor=doctorRepository.findById(appointment.getDoctor().getId());
-    if (doctor.isEmpty()){
-        logger.error("Error with validateAppointment: Doctor doesn't exist");
-        return 0;
-    }
-    this.doctorService.getDoctorAvailability(doctor.get().getId(),appointment.getAppointmentTime().toLocalDate());
+        Optional<Doctor> doctor=doctorRepository.findById(appointment.getDoctor().getId());
+        List<String> availableTimes;
+        if (doctor.isEmpty()){
+            logger.error("Error with validateAppointment: Doctor doesn't exist in DB");
+            return 0;
+        }
+        availableTimes=this.doctorService.getDoctorAvailability(doctor.get().getId(),appointment.getAppointmentTime().toLocalDate()); //output is 10:00,11:00, etc.
+        if (availableTimes.contains(appointment.getAppointmentTime().toString())){
+            logger.info("validateAppointment update: Appointment time is valid");
+            return 1;
+        }else {
+            logger.error("Error with validateAppointment: Time is unavailable");
+            return 0;
+        }
 
 
     }
 
 
-    }
+
+
+}
 
 
 }

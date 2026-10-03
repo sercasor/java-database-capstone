@@ -34,6 +34,12 @@ public class DoctorService {
 
     /*-----------------------------PUBLIC METHODS-----------------------------*/
 
+    /**
+     *
+     * @param doctorId
+     * @param date
+     * @return Returns a list of times in String format such as "10:00". These times are available (free) to book and ordered.
+     */
     @Transactional
     public List<String> getDoctorAvailability(Long doctorId, LocalDate date){
         Optional<Doctor> doctorOptional=this.doctorRepository.findById(doctorId);
