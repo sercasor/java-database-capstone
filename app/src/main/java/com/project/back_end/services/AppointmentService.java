@@ -67,7 +67,7 @@ public class AppointmentService {
             }
 
             // Doctor must exist and be available for the new slot
-            boolean isValid = service.validateAppointment(appointment); // TODO: ajustar firma cuando tengamos la clase Service
+            boolean isValid = service.validateAppointment(appointment)==1;
 
             if (!isValid) {
                 logger.error("Error when updating appointment: request is not valid");
