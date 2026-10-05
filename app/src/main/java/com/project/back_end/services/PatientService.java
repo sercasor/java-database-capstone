@@ -49,13 +49,13 @@ public class PatientService {
     //Returns a response containing a list of appointments or an error message.
     //The method checks if the provided patient ID matches the one decoded from the token (by email). If there's a mismatch, it returns an Unauthorized status.
     //If the IDs match, it retrieves the patient's appointments and returns them as a list of AppointmentDTO objects.
-    public ResponseEntity<Map<String, Object>> getPatientAppointment(Long id, String token){
+    public ResponseEntity<Map<String, Object>> getPatientAppointments(Long id, String token){
 
     try {
         Optional<Patient> patientOptional=this.patientRepository.findById(id);
         boolean patientIsAuthorized=patientOptional.get().getEmail().equals(this.tokenService.extractEmail(token));
         if(!patientIsAuthorized){
-            String message= "Error in getPatientAppointment method: unauthorized patient";
+            String message= "Error in getPatientAppointments method: unauthorized patient";
             logger.error(message);
             return ResponseEntity.badRequest().body(Map.of("message", message));
         }
@@ -63,7 +63,7 @@ public class PatientService {
         return ResponseEntity.ok().body(Map.of("appointments",appointmentListToDTO(this.appointmentRepository.findByPatientId(id))));
 
     } catch (Exception e) {
-        String message=String.format("Error in getPatientAppointment method: %s",e.getMessage());
+        String message=String.format("Error in getPatientAppointments method: %s",e.getMessage());
         logger.error(message);
         return ResponseEntity.badRequest().body(Map.of("message", message));
     }

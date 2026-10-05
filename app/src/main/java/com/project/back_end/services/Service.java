@@ -1,8 +1,10 @@
 package com.project.back_end.services;
 
+import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Admin;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
 import com.project.back_end.repo.AdminRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
@@ -122,10 +124,79 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
 
     }
 
+    //TODO: validatePatient, validatePatientLogin, filterPatient
+    //checks whether a patient exists based on their email or phone number
+    public boolean validatePatient(Patient patient){
+
+        Patient patientDB=patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone());
+        return patientDB != null;
+
+
+    }
+
+    //validates a patient's login credentials (email and password)
+    //login: DTO containing the login credentials of the patient (email and password)
+    //Returns a generated token if the login is valid
+    public ResponseEntity<Map<String, String>>validatePatientLogin(Login login){
+        String message;
+        //checks if email exists
+        Patient patientDB=patientRepository.findByEmail(login.getIdentifier());
+        if(patientDB==null){
+            message="error with method validatePatientLogin: patient not found";
+            return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+
+        //check pass
+        if(!patientDB.getPassword().equals(login.getPassword())){
+            message="error with method validatePatientLogin: patient password doesn't match the one stored in DB";
+        }
+        return ResponseEntity.badRequest().body(Map.of("token",tokenService.generateToken()));
+
+    }
+
+    //filters patient appointments based on certain criteria, such as condition and doctor name
+    // Returns the filtered list of patient appointments based on the criteria
+    //String condition: The medical condition to filter appointments by
+    //String name: The doctor's name to filter appointments by
+    //String token: The authentication token to identify the patient
+    public ResponseEntity<Map<String, Object>> filterPatient(
+            String condition,
+            String name,
+            String token
+    ){
+        boolean conditionIsIntroduced=condition!=null&&!condition.isBlank();
+        boolean nameIsIntroduced=name!=null&&!name.isBlank();
+        String messageKey="patients";
+        String message;
+        Patient patient=this.patientRepository.findByEmail(this.tokenService.extractEmail(token));
+        Long patientID=patient.getId();
+
+        if(patient==null){
+            message="Error with method filterPatient: patient not found in DB";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of(messageKey,message));
+        }
+
+        //depending on the parameters that were introduced, the appropiate service method is called
+        if (conditionIsIntroduced&&nameIsIntroduced){
+            return ResponseEntity.ok().body(Map.of(messageKey,this.patientService.filterByDoctorAndCondition(condition,name,patientID)));
+        }else if(conditionIsIntroduced&&!nameIsIntroduced){
+            return ResponseEntity.ok().body(Map.of(messageKey,this.patientService.filterByCondition(condition,patientID)));
+        }else if(!conditionIsIntroduced&&nameIsIntroduced){
+            return ResponseEntity.ok().body(Map.of(messageKey,this.patientService.filterByDoctor(name,patientID))) ;
+        }else {
+            //If no filters are provided, it retrieves all appointments for the patient
+            return ResponseEntity.badRequest().body(Map.of(messageKey,this.patientService.getPatientAppointments(patient.getId(),token)));
+        }
+
+
+
+
+    }
 
 
 
 }
 
 
-}
+
