@@ -1,61 +1,177 @@
 package com.project.back_end.controllers;
 
 
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.services.AppointmentService;
+import com.project.back_end.services.DoctorService;
+import com.project.back_end.services.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("${api.path}" + "doctor") //https://docs.spring.io/spring-boot/reference/features/external-config.html#features.external-config.files.property-placeholders
 public class DoctorController {
 
-// 1. Set Up the Controller Class:
-//    - Annotate the class with `@RestController` to define it as a REST controller that serves JSON responses.
-//    - Use `@RequestMapping("${api.path}doctor")` to prefix all endpoints with a configurable API path followed by "doctor".
-//    - This class manages doctor-related functionalities such as registration, login, updates, and availability.
+    /*-----------------------------PRIVATE ATTRIBUTES-----------------------------*/
+    @Autowired
+    private DoctorService doctorService;
+    @Autowired
+    Service service;
+    private Logger logger= LoggerFactory.getLogger(AppointmentService.class);
 
 
-// 2. Autowire Dependencies:
-//    - Inject `DoctorService` for handling the core logic related to doctors (e.g., CRUD operations, authentication).
-//    - Inject the shared `Service` class for general-purpose features like token validation and filtering.
+
+    /*-----------------------------PUBLIC METHODS-----------------------------*/
+    //user //role of the user (admin, etc.)
+    @GetMapping("/availability/{user}/{doctorId}/{date}/{token}")
+    public ResponseEntity<Map<String,Object>> getDoctorAvailability(
+            @PathVariable("user") String user,
+            @PathVariable("doctorId") Long doctorId,
+            @PathVariable("date") LocalDate date,
+            @PathVariable("token") String token
+    ){
+        if (service.validateToken(token, user).getStatusCode().is4xxClientError()){
+            logger.error("Error with DoctorController.getDoctorAvailability(): invalid token");
+            return ResponseEntity.badRequest().body(Map.of("message","Invalid token"));
+        }
+        logger.info("DoctorController.getDoctorAvailability()  request succesfully");
+        return ResponseEntity.ok().body(Map.of("availability",this.doctorService.getDoctorAvailability(doctorId, date)));
+
+    }
+
+    @GetMapping
+    public Map<String, List<Doctor>>getDoctors(){
+       return  Map.of("doctors",this.doctorService.getDoctors());
+
+    }
+
+    @PostMapping("/{token}")
+    public ResponseEntity<Map<String,String>>saveDoctor(Doctor doctor, String token){
+        String message="Error with DoctorController.saveDoctor() :";
+        if (service.validateToken(token, "doctor").getStatusCode().is4xxClientError()){
+            message+= "invalid token";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message","Invalid token"));
+        }
+
+        switch (doctorService.saveDoctor(doctor)){
+            case 0:
+                message+= " Internal error";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message+= " Doctor already exists";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
+
+                message="Doctor successfully saved";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message+=" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
 
 
-// 3. Define the `getDoctorAvailability` Method:
-//    - Handles HTTP GET requests to check a specific doctor’s availability on a given date.
-//    - Requires `user` type, `doctorId`, `date`, and `token` as path variables.
-//    - First validates the token against the user type.
-//    - If the token is invalid, returns an error response; otherwise, returns the availability status for the doctor.
 
 
-// 4. Define the `getDoctor` Method:
-//    - Handles HTTP GET requests to retrieve a list of all doctors.
-//    - Returns the list within a response map under the key `"doctors"` with HTTP 200 OK status.
+    }
+    @PostMapping("/login")
+    public  ResponseEntity<Map<String, String>>doctorLogin(
+            Login login
+    ){
+        return this.doctorService.validateDoctor(login);
+
+    }
+
+    @PutMapping("/{token}")
+    public ResponseEntity<Map<String,String>>updateDoctor(
+            Doctor doctor,
+            @PathVariable("token")String token
+    ){
+        String message="Error with DoctorController.updateDoctor() :";
+        if (service.validateToken(token, "doctor").getStatusCode().is4xxClientError()){
+            message+= "invalid token";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message","Invalid token"));
+        }
+
+        switch (doctorService.updateDoctor(doctor)){
+            case 0:
+                message+= " Internal error";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message+= " Doctor already exists";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
+
+                message="Doctor successfully updated";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message+=" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
 
 
-// 5. Define the `saveDoctor` Method:
-//    - Handles HTTP POST requests to register a new doctor.
-//    - Accepts a validated `Doctor` object in the request body and a token for authorization.
-//    - Validates the token for the `"admin"` role before proceeding.
-//    - If the doctor already exists, returns a conflict response; otherwise, adds the doctor and returns a success message.
+    }
+    @DeleteMapping("/{id}/{token}")
+    public ResponseEntity<Map<String,String>>deleteDoctor(
+            @PathVariable("token") String token,
+            @PathVariable("id") Long id
+    ){
 
 
-// 6. Define the `doctorLogin` Method:
-//    - Handles HTTP POST requests for doctor login.
-//    - Accepts a validated `Login` DTO containing credentials.
-//    - Delegates authentication to the `DoctorService` and returns login status and token information.
+        String message="Error in DoctorController.deleteDoctor(): ";
+        if(service.validateToken(token, "admin").getStatusCode().is4xxClientError()){
+            message+= " Forbidden request: you must have admin role";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
 
+        Optional<Doctor> doctor=this.doctorService.getDoctor(id);
+        switch (this.doctorService.deleteDoctor(doctor.get())){
+            case 0:
+                message+= " Internal error";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message+= " Doctor already exists";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
 
-// 7. Define the `updateDoctor` Method:
-//    - Handles HTTP PUT requests to update an existing doctor's information.
-//    - Accepts a validated `Doctor` object and a token for authorization.
-//    - Token must belong to an `"admin"`.
-//    - If the doctor exists, updates the record and returns success; otherwise, returns not found or error messages.
+                message="Doctor successfully updated";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message+=" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+    }
 
-
-// 8. Define the `deleteDoctor` Method:
-//    - Handles HTTP DELETE requests to remove a doctor by ID.
-//    - Requires both doctor ID and an admin token as path variables.
-//    - If the doctor exists, deletes the record and returns a success message; otherwise, responds with a not found or error message.
-
-
-// 9. Define the `filter` Method:
-//    - Handles HTTP GET requests to filter doctors based on name, time, and specialty.
-//    - Accepts `name`, `time`, and `speciality` as path variables.
-//    - Calls the shared `Service` to perform filtering logic and returns matching doctors in the response.
-
+    @GetMapping("/filter/{name}/{time}/{specialty}")
+    public  Map<String, Object>filter(
+            @PathVariable("name") String name,
+            @PathVariable("time") String time,
+            @PathVariable("specialty") String specialty
+    ){
+        return service.filterDoctor(name,specialty,time); //time can be either "am" or "pm"
+    }
 
 }

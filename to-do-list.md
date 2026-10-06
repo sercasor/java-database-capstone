@@ -90,3 +90,14 @@ Add pagination or infinite scroll to handle large patient lists.
         Build a more robust token validation system (e.g., JWT token expiration handling).
         Add error handling to provide user-friendly messages when token validation fails.
 
+#endpoints
+Next Steps
+
+Now that you have coded this, you can take the following steps to continue improving and extending your submission:
+
+    Implement authentication and authorization using Spring Security.
+    Protect API endpoints based on user roles such as admin, doctor, or patient.
+    Store and verify passwords securely using hashing algorithms.
+    Apply role-based access control (RBAC) to secure sensitive operations.
+
+These enhancements will make your application production-ready by ensuring only authorized users can access specific features.

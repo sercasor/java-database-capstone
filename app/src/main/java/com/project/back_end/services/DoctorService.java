@@ -141,6 +141,16 @@ public class DoctorService {
         return this.doctorRepository.findAll();
     }
 
+    /**
+     * Returns a Doctor object via their ID
+     * @param id Doctor ID
+     * @return Doctor object
+     */
+    public Optional<Doctor>  getDoctor(Long id){
+        return this.doctorRepository.findById(id);
+
+    }
+
 
     /**
      * Used to  delete doctor record by ID in the database

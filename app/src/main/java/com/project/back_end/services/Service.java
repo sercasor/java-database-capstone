@@ -83,6 +83,7 @@ public class Service {
     }
     //filters doctors based on name, specialty, and available time
     //this method uses multiple if-else but it could be much more compact should a bitmask and a switch be used (kinda advanced). see https://www.baeldung.com/java-bitmasking
+    //time: am/pm
         public Map<String, Object> filterDoctor(String name, String specialty, String time) {
         boolean hasName = name != null && !name.isBlank();
         boolean hasSpecialty = specialty != null && !specialty.isBlank();

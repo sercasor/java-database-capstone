@@ -30,7 +30,7 @@ public class AppointmentController {
 
     @GetMapping("/{date}/{patientName}/{token}")
     public ResponseEntity<Map<String,Object>> getAppointments(
-            @PathVariable("date")String date,
+            @PathVariable("date")LocalDate date,
             @PathVariable("patientName")String patientName,
             @PathVariable("token")String token
 
@@ -45,7 +45,7 @@ public class AppointmentController {
         }
         //returns appointments for the given patient on the specified date
         logger.info("AppointmentController.getAppointments(): success on getting the list of apoointments");
-        return ResponseEntity.ok().body(Map.of("appointments",this.appointmentService.getAppointments(patientName, LocalDate.parse(date),token)));
+        return ResponseEntity.ok().body(Map.of("appointments",this.appointmentService.getAppointments(patientName, date,token)));
 
 
 
@@ -108,7 +108,7 @@ public class AppointmentController {
                 logger.error(message);
                 return ResponseEntity.badRequest().body(Map.of("message",message));
             case 1:
-                this.appointmentService.updateAppointment(appointment);
+
                 message="Appointment successfully updated";
                 logger.info(message);
                 return ResponseEntity.ok().body(Map.of("message",message));
@@ -124,7 +124,7 @@ public class AppointmentController {
     @DeleteMapping("/{id}/{token}")
     public ResponseEntity<Map<String,String>>cancelAppointment(
             @PathVariable("token") String token,
-            @PathVariable("id") String id
+            @PathVariable("id") Long id
     ){
         String message;
         String error="Error in AppointmentController.cancelAppointment(): ";
@@ -133,7 +133,7 @@ public class AppointmentController {
             logger.error(message);
             return ResponseEntity.badRequest().body(Map.of("message",message));
         }
-        return this.appointmentService.cancelAppointment(Long.parseLong(id),token);
+        return this.appointmentService.cancelAppointment(id,token);
 
 
     }
