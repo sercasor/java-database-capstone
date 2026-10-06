@@ -95,6 +95,13 @@ public class AppointmentService {
         }
         return response;
     }
+
+    /**
+     * Checks if appoint exists, token is valid, appointment's patient matches received (token) patient and deletes appointment
+     * @param id Appointment id
+     * @param token JWT token with identifier (username/email)
+     * @return Success (2xx) or failure message (4xx)
+     */
     @Transactional
     public ResponseEntity<Map<String, String>> cancelAppointment(long id, String token) {
         try {

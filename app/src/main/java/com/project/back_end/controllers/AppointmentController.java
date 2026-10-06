@@ -120,7 +120,7 @@ public class AppointmentController {
 
     }
 
-    //TODO: finish
+
     @DeleteMapping("/{id}/{token}")
     public ResponseEntity<Map<String,String>>cancelAppointment(
             @PathVariable("token") String token,
@@ -133,27 +133,8 @@ public class AppointmentController {
             logger.error(message);
             return ResponseEntity.badRequest().body(Map.of("message",message));
         }
+        return this.appointmentService.cancelAppointment(Long.parseLong(id),token);
 
-        //TODO
-        switch (this.service.validateAppointment(appointment)){
-            case 0:
-                message=error+ " Time is unavailable";
-                logger.error(message);
-                return ResponseEntity.badRequest().body(Map.of("message",message));
-            case -1:
-                message=error+ " Doctor doesn't exist";
-                logger.error(message);
-                return ResponseEntity.badRequest().body(Map.of("message",message));
-            case 1:
-                this.appointmentService.updateAppointment(appointment);
-                message="Appointment successfully updated";
-                logger.info(message);
-                return ResponseEntity.ok().body(Map.of("message",message));
-            default:
-                message=error+" unknown error, return int doesn't follow conventions";
-                logger.info(message);
-                return ResponseEntity.badRequest().body(Map.of("message",message));
-        }
 
     }
 
