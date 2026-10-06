@@ -33,9 +33,16 @@ public class Service {
     @Autowired
     private  PatientService patientService;
     private Logger logger= LoggerFactory.getLogger(AppointmentService.class);
-//TODO: HAY QUE HACER EL METODO
-    //checks the validity of a token for a given user
-public ResponseEntity<Map<String, String>> validateToken(String token, String role){
+
+
+
+    /**
+     * checks the validity of a token for a given user and returns a status message
+     * @param token JWT token containing identifier (username/email in case of admin or other user type)
+     * @param role User role (admin, doctor or patient)
+     * @return Returns an HTTP message: 4xx (bad request) if unsucessful, or 2XX code success otherwise
+     */
+    public ResponseEntity<Map<String, String>> validateToken(String token, String role){
     String message;
     if (this.tokenService.validateToken(token,role)){
         message="Token is valid";
@@ -57,7 +64,7 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
             Admin repoAdmin=adminRepository.findByUsername(receivedAdmin.getUsername());
 
             if (repoAdmin!=null&&receivedAdmin.getPassword().equals(repoAdmin.getPassword())){
-                return ResponseEntity.ok().body(Map.of("token",this.tokenService.generateToken()));
+                return ResponseEntity.ok().body(Map.of("token",this.tokenService.generateToken(receivedAdmin.getUsername())));
 
             }else {
                 message="Admin is invalid, could not be found";
@@ -101,10 +108,11 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
         }
     }
 
-    //This method validates whether an appointment is available based on the doctor's schedule. It's important for ensuring patients are scheduled only during valid time slots.
-    //1 if the appointment time is valid
-    //0 if the time is unavailable
-    //-1 if the doctor doesn't exist
+    /**
+     * validates whether an appointment is available based on the doctor's schedule. It's important for ensuring patients are scheduled only during valid time slots.
+     * @param appointment Appointment object
+     * @return 1 if the appointment time is valid, 0 if the time is unavailable, -1 if the doctor doesn't exist
+     */
     public int validateAppointment(Appointment appointment){
         Optional<Doctor> doctor=doctorRepository.findById(appointment.getDoctor().getId());
         List<String> availableTimes;
@@ -150,7 +158,7 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
         if(!patientDB.getPassword().equals(login.getPassword())){
             message="error with method validatePatientLogin: patient password doesn't match the one stored in DB";
         }
-        return ResponseEntity.badRequest().body(Map.of("token",tokenService.generateToken()));
+        return ResponseEntity.badRequest().body(Map.of("token",tokenService.generateToken(login.getIdentifier())));
 
     }
 
@@ -168,7 +176,7 @@ public ResponseEntity<Map<String, String>> validateToken(String token, String ro
         boolean nameIsIntroduced=name!=null&&!name.isBlank();
         String messageKey="patients";
         String message;
-        Patient patient=this.patientRepository.findByEmail(this.tokenService.extractEmail(token));
+        Patient patient=this.patientRepository.findByEmail(this.tokenService.extractIdentifier(token));
         Long patientID=patient.getId();
 
         if(patient==null){

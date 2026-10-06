@@ -35,6 +35,12 @@ public class AppointmentService {
     private Logger logger=LoggerFactory.getLogger(AppointmentService.class);
 
     /*-----------------------------PUBLIC METHODS-----------------------------*/
+
+    /**
+     * Saves an appointment in the database
+     * @param appointment Appointment object
+     * @return Returns 1 if successful, 0 otherwise
+     */
     @Transactional
     public int bookAppointment(Appointment appointment){
         try {
@@ -47,6 +53,12 @@ public class AppointmentService {
             return 0;
         }
     }
+
+    /**
+     * Checks if the appointment exist, ensures received patient matches appointment's, validates Doctor existance and availability and updates appointment
+     * @param appointment Appointment object
+     * @return HTTP message with success status or the corresponding error message and status
+     */
     @Transactional
     public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
         ResponseEntity<Map<String, String>> response;
@@ -93,14 +105,13 @@ public class AppointmentService {
                 return ResponseEntity.badRequest().body(Map.of("message", "Appointment not found."));
             }
 
-            if (tokenService.validateToken(token, "patient").isEmpty() == false) {
-                // validateToken returns a  map with  "message" when it's INVALID
+            if (!tokenService.validateToken(token, "patient")) {
                 logger.error("Error when cancelling appointment: Token is invalid");
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid token."));
             }
 
             Appointment appointment = appointmentOptional.get();
-            String emailFromToken = tokenService.extractEmail(token);
+            String emailFromToken = tokenService.extractIdentifier(token);
             Patient patientFromToken = patientRepository.findByEmail(emailFromToken);
 
             if (patientFromToken == null || !appointment.getPatient().getId().equals(patientFromToken.getId())) {
@@ -118,12 +129,20 @@ public class AppointmentService {
         }
     }
 
-    //This method retrieves a list of appointments for a specific doctor on a specific date.
+    //.
+
+    /**
+     * This method retrieves a list of appointments for a specific doctor on a specific date
+     * @param pname Patient name
+     * @param date Name to filter appointments
+     * @param token JWT token that contains an identification (userName for admin or email for rest of users)
+     * @return
+     */
     @Transactional
     public Map<String, Object> getAppointments(String pname, LocalDate date, String token) {
         Map<String, Object> result = new HashMap<>();
 
-        String emailFromToken = tokenService.extractEmail(token);
+        String emailFromToken = tokenService.extractIdentifier(token);
         Doctor doctorFromToken = doctorRepository.findByEmail(emailFromToken);
 
         if (doctorFromToken == null) {

@@ -1,48 +1,161 @@
 package com.project.back_end.controllers;
 
+import com.project.back_end.models.Appointment;
+import com.project.back_end.services.AppointmentService;
+import com.project.back_end.services.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/appointments")
 public class AppointmentController {
 
-// 1. Set Up the Controller Class:
-//    - Annotate the class with `@RestController` to define it as a REST API controller.
-//    - Use `@RequestMapping("/appointments")` to set a base path for all appointment-related endpoints.
-//    - This centralizes all routes that deal with booking, updating, retrieving, and canceling appointments.
+    /*-----------------------------PRIVATE ATTRIBUTES-----------------------------*/
+    @Autowired
+    private AppointmentService appointmentService;
+    @Autowired
+    private Service service;
+    private Logger logger= LoggerFactory.getLogger(AppointmentService.class);
 
 
-// 2. Autowire Dependencies:
-//    - Inject `AppointmentService` for handling the business logic specific to appointments.
-//    - Inject the general `Service` class, which provides shared functionality like token validation and appointment checks.
+
+    /*-----------------------------PUBLIC METHODS-----------------------------*/
 
 
-// 3. Define the `getAppointments` Method:
-//    - Handles HTTP GET requests to fetch appointments based on date and patient name.
-//    - Takes the appointment date, patient name, and token as path variables.
-//    - First validates the token for role `"doctor"` using the `Service`.
-//    - If the token is valid, returns appointments for the given patient on the specified date.
-//    - If the token is invalid or expired, responds with the appropriate message and status code.
+    @GetMapping("/{date}/{patientName}/{token}")
+    public ResponseEntity<Map<String,Object>> getAppointments(
+            @PathVariable("date")String date,
+            @PathVariable("patientName")String patientName,
+            @PathVariable("token")String token
+
+    ){
+        String message;
+        String error="Error in AppointmentController.getAppointments(): ";
+        //ensure only doctors can see appointment data
+        if(this.service.validateToken(token,"doctor").getStatusCode().is4xxClientError()){
+            message=error+ " Forbidden content: you must have Doctor role to access";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message","Forbidden content: you must be a Doctor to access this piece of content"));
+        }
+        //returns appointments for the given patient on the specified date
+        logger.info("AppointmentController.getAppointments(): success on getting the list of apoointments");
+        return ResponseEntity.ok().body(Map.of("appointments",this.appointmentService.getAppointments(patientName, LocalDate.parse(date),token)));
 
 
-// 4. Define the `bookAppointment` Method:
-//    - Handles HTTP POST requests to create a new appointment.
-//    - Accepts a validated `Appointment` object in the request body and a token as a path variable.
-//    - Validates the token for the `"patient"` role.
-//    - Uses service logic to validate the appointment data (e.g., check for doctor availability and time conflicts).
-//    - Returns success if booked, or appropriate error messages if the doctor ID is invalid or the slot is already taken.
+
+    }
+
+    @PostMapping("/{token}")
+    public ResponseEntity<Map<String,String>>bookAppointment(
+            Appointment appointment,
+            @PathVariable("token") String token
+            ){
+        String message;
+        String error="Error in AppointmentController.bookAppointment(): ";
+        if(service.validateToken(token, "patient").getStatusCode().is4xxClientError()){
+            message=error+ " Forbidden request: you must have Patient role";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+        switch (this.service.validateAppointment(appointment)){
+            case 0:
+                message=error+ " Time is unavailable";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message=error+ " Doctor doesn't exist";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
+                appointmentService.bookAppointment(appointment);
+                message="Appointment successfully booked";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message=error+" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
 
 
-// 5. Define the `updateAppointment` Method:
-//    - Handles HTTP PUT requests to modify an existing appointment.
-//    - Accepts a validated `Appointment` object and a token as input.
-//    - Validates the token for `"patient"` role.
-//    - Delegates the update logic to the `AppointmentService`.
-//    - Returns an appropriate success or failure response based on the update result.
 
+    }
+    @PutMapping("/{token}")
+    public ResponseEntity<Map<String,String>>updateAppointment(
+            Appointment appointment,
+            @PathVariable("token") String token
+    ){
+        String message;
+        String error="Error in AppointmentController.updateAppointment(): ";
+        if(service.validateToken(token, "patient").getStatusCode().is4xxClientError()){
+            message=error+ " Forbidden request: you must have Patient role";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+        switch (this.service.validateAppointment(appointment)){
+            case 0:
+                message=error+ " Time is unavailable";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message=error+ " Doctor doesn't exist";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
+                this.appointmentService.updateAppointment(appointment);
+                message="Appointment successfully updated";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message=error+" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
 
-// 6. Define the `cancelAppointment` Method:
-//    - Handles HTTP DELETE requests to cancel a specific appointment.
-//    - Accepts the appointment ID and a token as path variables.
-//    - Validates the token for `"patient"` role to ensure the user is authorized to cancel the appointment.
-//    - Calls `AppointmentService` to handle the cancellation process and returns the result.
+    }
+
+    //TODO: finish
+    @DeleteMapping("/{id}/{token}")
+    public ResponseEntity<Map<String,String>>cancelAppointment(
+            @PathVariable("token") String token,
+            @PathVariable("id") String id
+    ){
+        String message;
+        String error="Error in AppointmentController.cancelAppointment(): ";
+        if(service.validateToken(token, "patient").getStatusCode().is4xxClientError()){
+            message=error+ " Forbidden request: you must have Patient role";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+
+        //TODO
+        switch (this.service.validateAppointment(appointment)){
+            case 0:
+                message=error+ " Time is unavailable";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case -1:
+                message=error+ " Doctor doesn't exist";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+            case 1:
+                this.appointmentService.updateAppointment(appointment);
+                message="Appointment successfully updated";
+                logger.info(message);
+                return ResponseEntity.ok().body(Map.of("message",message));
+            default:
+                message=error+" unknown error, return int doesn't follow conventions";
+                logger.info(message);
+                return ResponseEntity.badRequest().body(Map.of("message",message));
+        }
+
+    }
 
 
 }
