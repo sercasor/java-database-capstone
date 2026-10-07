@@ -27,9 +27,9 @@ public class PrescriptionController {
 
 
     /*-----------------------------PUBLIC METHODS-----------------------------*/
-    //TODO a partir de aqui todo hacer y revisar
+
     @PostMapping("/{token}")
-    public  savePrescription(
+    public ResponseEntity<Map<String, String>> savePrescription(
             @PathVariable("token") String token,
             @Valid @RequestBody Prescription prescription
             ){
@@ -41,16 +41,26 @@ public class PrescriptionController {
             return ResponseEntity.badRequest().body(Map.of("failure",message));
         }
 
+        return prescriptionService.savePrescription(prescription);
 
     }
+
+
 
     //appointmentId: The ID of the appointment to retrieve the prescription for
     //token: The authentication token for the doctor
     @GetMapping("/{appointmentId}/{token}")
-    public HttpEntity<Map<String,Object>> getPrescription(
+    public ResponseEntity<Map<String,Object>> getPrescription(
             @PathVariable("appointmentId") Long appointmentId,
             @PathVariable("token") String token
     ){
+        //token validation
+        String message="Error with PrescriptionController.savePrescription: ";
+        if (service.validateToken(token, "doctor").getStatusCode().is4xxClientError()){
+            message+= "invalid token";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("failure",message));
+        }
 
         return prescriptionService.getPrescription(appointmentId);
     }
