@@ -6,6 +6,7 @@ import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.PatientService;
 import com.project.back_end.services.Service;
 import com.project.back_end.services.TokenService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class PatientController {
 
     @PostMapping()
     public ResponseEntity<Map<String,String>> createPatient(
-            Patient patient
+            @Valid @RequestBody Patient patient
     ){
         //patient validation
         String message;

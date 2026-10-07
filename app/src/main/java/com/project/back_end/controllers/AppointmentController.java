@@ -3,6 +3,7 @@ package com.project.back_end.controllers;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.Service;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class AppointmentController {
 
     @PostMapping("/{token}")
     public ResponseEntity<Map<String,String>>bookAppointment(
-            Appointment appointment,
+            @Valid @RequestBody Appointment appointment,
             @PathVariable("token") String token
             ){
         String message;
@@ -88,7 +89,7 @@ public class AppointmentController {
     }
     @PutMapping("/{token}")
     public ResponseEntity<Map<String,String>>updateAppointment(
-            Appointment appointment,
+            @Valid @RequestBody Appointment appointment,
             @PathVariable("token") String token
     ){
         String message;

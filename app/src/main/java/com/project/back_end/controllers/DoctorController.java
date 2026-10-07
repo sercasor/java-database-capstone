@@ -6,6 +6,7 @@ import com.project.back_end.models.Doctor;
 import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.Service;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,9 @@ public class DoctorController {
     }
 
     @PostMapping("/{token}")
-    public ResponseEntity<Map<String,String>>saveDoctor(Doctor doctor, String token){
+    public ResponseEntity<Map<String,String>>saveDoctor(
+            @Valid @RequestBody Doctor doctor,
+            String token){
         String message="Error with DoctorController.saveDoctor() :";
         if (service.validateToken(token, "doctor").getStatusCode().is4xxClientError()){
             message+= "invalid token";
