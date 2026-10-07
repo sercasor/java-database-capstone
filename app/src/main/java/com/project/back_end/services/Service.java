@@ -133,8 +133,13 @@ public class Service {
 
     }
 
-    //TODO: validatePatient, validatePatientLogin, filterPatient
-    //checks whether a patient exists based on their email or phone number
+
+
+    /**
+     *checks whether a patient exists based on their email or phone number
+     * @param patient Patient object
+     * @return Returns true if they exist or null if not
+     */
     public boolean validatePatient(Patient patient){
 
         Patient patientDB=patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone());

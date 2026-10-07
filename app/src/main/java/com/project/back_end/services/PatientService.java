@@ -31,8 +31,14 @@ public class PatientService {
 
 
     /*-----------------------------PUBLIC METHODS-----------------------------*/
-    //Saves a new patient to the database
-    //Returns 1 on success, and 0 on failure (for example, exception)
+    //
+    //
+
+    /**
+     * Saves a new patient to the database or fails if null (Patient object is null)
+     * @param patient Patient object
+     * @return Returns 1 on success, and 0 on failure (for example, exception such as null entity saving attempt)
+     */
     public int createPatient(Patient patient){//The patient object to be saved
 
         try {
@@ -40,6 +46,23 @@ public class PatientService {
             return 1;
         } catch (Exception e) {
             logger.error("Patient saving error: {}",e.getMessage());
+            return 0;
+        }
+
+    }
+
+    /**
+     * Creates a patient in DB using their ID instead of a Patient Object for occasions where a token is used
+     * This method leverages method overload as the original one's parameter is a Patient object. Also validates if the user exists (not null)
+     * @param email Patient email, normally extracted from a token via its service
+     * @return Returns 1 on success, 0 otherwise
+     */
+    public int createPatient(String email){
+        Optional<Patient> patient= Optional.ofNullable(this.patientRepository.findByEmail(email));
+
+        if(patient.isPresent()){
+            return this.createPatient(patient.get());
+        }else {
             return 0;
         }
 
@@ -53,7 +76,7 @@ public class PatientService {
 
     try {
         Optional<Patient> patientOptional=this.patientRepository.findById(id);
-        boolean patientIsAuthorized=patientOptional.get().getEmail().equals(this.tokenService.extractEmail(token));
+        boolean patientIsAuthorized=patientOptional.get().getEmail().equals(this.tokenService.extractIdentifier(token));
         if(!patientIsAuthorized){
             String message= "Error in getPatientAppointments method: unauthorized patient";
             logger.error(message);
@@ -122,9 +145,15 @@ public class PatientService {
 
     //Fetches the patient's details based on the provided JWT token
     //The method extracts the email from the token and retrieves the corresponding patient from the database. The patient details are then returned as part of the response.
+
+    /**
+     * Fetches the patient's details (A DTO-like without password) based on the provided JWT token
+     * @param token
+     * @return A Map that contains "patient" as the key and the details as a List de String
+     */
     public ResponseEntity<Map<String, Object>> getPatientDetails(String token){
         try {
-            Optional<Patient> patientOptional= Optional.ofNullable(this.patientRepository.findByEmail(this.tokenService.extractEmail(token)));
+            Optional<Patient> patientOptional= Optional.ofNullable(this.patientRepository.findByEmail(this.tokenService.extractIdentifier(token)));
             List<String> patientDetails=new ArrayList<>();
             patientDetails.add(patientOptional.get().getName());
             patientDetails.add(patientOptional.get().getId().toString());

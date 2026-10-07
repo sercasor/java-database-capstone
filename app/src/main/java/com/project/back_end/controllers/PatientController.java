@@ -1,49 +1,124 @@
 package com.project.back_end.controllers;
 
+import com.project.back_end.models.Patient;
+import com.project.back_end.services.AppointmentService;
+import com.project.back_end.services.PatientService;
+import com.project.back_end.services.Service;
+import com.project.back_end.services.TokenService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/patient")
 public class PatientController {
 
-// 1. Set Up the Controller Class:
-//    - Annotate the class with `@RestController` to define it as a REST API controller for patient-related operations.
-//    - Use `@RequestMapping("/patient")` to prefix all endpoints with `/patient`, grouping all patient functionalities under a common route.
+
+    /*-----------------------------PRIVATE ATTRIBUTES-----------------------------*/
+    @Autowired
+    PatientService patientService;
+    @Autowired
+    Service service;
+    @Autowired
+    TokenService tokenService;
+    private Logger logger= LoggerFactory.getLogger(AppointmentService.class);
 
 
-// 2. Autowire Dependencies:
-//    - Inject `PatientService` to handle patient-specific logic such as creation, retrieval, and appointments.
-//    - Inject the shared `Service` class for tasks like token validation and login authentication.
+
+    /*-----------------------------PUBLIC METHODS-----------------------------*/
+    //Validates the token using service.validateToken(). If the token is valid, fetches the patient details using patientService.getPatientDetails()
+    @GetMapping("/{token}")
+    public ResponseEntity<Map<String,Object>> getPatient(
+            @PathVariable("token") String token
+    ){
+
+        //token validation
+        String message="Error with PatientController.getPatient: ";
+        if (service.validateToken(token, "patient").getStatusCode().is4xxClientError()){
+            message+= "invalid token";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("failure",message));
+        }
+
+        //patient retrieval
+        return patientService.getPatientDetails(token);
+    }
 
 
-// 3. Define the `getPatient` Method:
-//    - Handles HTTP GET requests to retrieve patient details using a token.
-//    - Validates the token for the `"patient"` role using the shared service.
-//    - If the token is valid, returns patient information; otherwise, returns an appropriate error message.
+    @PostMapping()
+    public ResponseEntity<Map<String,String>> createPatient(
+            Patient patient
+    ){
+        //patient validation
+        String message;
+        if(this.service.validatePatient(patient)){
+            message= "Error with PatientController.createPatient: patient already exists";
+            logger.error(message);
+            return ResponseEntity.badRequest().body(Map.of("failure",message));
+        }else{
+            //patient creation
+            if (this.patientService.createPatient(patient)==1){
+                message="Signup successful";
+                logger.info(message);
+                return  ResponseEntity.ok(Map.of("success",message));
+            }else{
+                message= "Error with PatientController.createPatient: patient is null, needs adequate and complete patient info for saving";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(Map.of("failure",message));
+            }
 
 
-// 4. Define the `createPatient` Method:
-//    - Handles HTTP POST requests for patient registration.
-//    - Accepts a validated `Patient` object in the request body.
-//    - First checks if the patient already exists using the shared service.
-//    - If validation passes, attempts to create the patient and returns success or error messages based on the outcome.
+        }
 
 
-// 5. Define the `login` Method:
-//    - Handles HTTP POST requests for patient login.
-//    - Accepts a `Login` DTO containing email/username and password.
-//    - Delegates authentication to the `validatePatientLogin` method in the shared service.
-//    - Returns a response with a token or an error message depending on login success.
+    }
 
 
-// 6. Define the `getPatientAppointment` Method:
-//    - Handles HTTP GET requests to fetch appointment details for a specific patient.
-//    - Requires the patient ID, token, and user role as path variables.
-//    - Validates the token using the shared service.
-//    - If valid, retrieves the patient's appointment data from `PatientService`; otherwise, returns a validation error.
 
 
-// 7. Define the `filterPatientAppointment` Method:
-//    - Handles HTTP GET requests to filter a patient's appointments based on specific conditions.
-//    - Accepts filtering parameters: `condition`, `name`, and a token.
-//    - Token must be valid for a `"patient"` role.
-//    - If valid, delegates filtering logic to the shared service and returns the filtered result.
+
+    //createPatient
+
+    //TODO: ver que podemos aprovechar
+    /*
+    *
+    *
+    *
+    *
+    *
+    * */
+
+
+
+    //login
+    //getPatientAppointment
+    //filterPatientAppointment
+
+    /**
+     * Validates a Patient token and returns a Response with a success/failure message
+     * This function is useful for multiple methods that require a preliminary token validation
+     * UPDATE: this function turns out to be redundant as an if-else statement is needed in order for subsequent actions to take place. Perhaps we can refactor/reimagine it so redundant code is avoided
+     * @param token User JWT token containing an identifier (username/email)
+     * @param method Method(function) of the current class to help trace errors
+     * @return Response with success/failure message
+     */
+    private ResponseEntity<Map<String,Object>> tokenIsValid(String token, String method){
+        String message="Error with PatientController."+ method +": ";
+        if (service.validateToken(token, "patient").getStatusCode().is4xxClientError()){
+            message+= "invalid token";
+            logger.error(message);
+            return ResponseEntity.ok().body(Map.of("failure",message));
+        }else{
+            message="Success with PatientController."+ method +": ";
+            logger.info(message);
+            return ResponseEntity.ok().body(Map.of("success",message));
+        }
+    }
+
 
 
 
