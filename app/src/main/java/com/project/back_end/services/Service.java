@@ -168,11 +168,13 @@ public class Service {
 
     }
 
-    //filters patient appointments based on certain criteria, such as condition and doctor name
-    // Returns the filtered list of patient appointments based on the criteria
-    //String condition: The medical condition to filter appointments by
-    //String name: The doctor's name to filter appointments by
-    //String token: The authentication token to identify the patient
+    /**
+     * filters patient appointments based on certain criteria, such as condition and doctor name
+     * @param condition The medical condition to filter appointments by
+     * @param name The doctor's name to filter appointments by
+     * @param token The authentication token to identify the patient
+     * @return Returns the filtered list of patient appointments based on the criteria contained in a Map inside an HTTP Response with status code
+     */
     public ResponseEntity<Map<String, Object>> filterPatient(
             String condition,
             String name,
