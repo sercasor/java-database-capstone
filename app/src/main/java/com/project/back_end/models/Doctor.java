@@ -39,7 +39,7 @@ public class Doctor {
     private String phone;
 
 
-    @ElementCollection // ensures that the list of time slots is stored as a separate collection in the database.
+    @ElementCollection(fetch = FetchType.EAGER) // ensures that the list of time slots is stored as a separate collection in the database.
     //Each time slot is represented as a string (e.g.: "09:00-10:00")
     private List<String> availableTimes;
 
