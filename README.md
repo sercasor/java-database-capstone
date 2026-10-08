@@ -12,7 +12,13 @@ Copy the contents of .env.example to .env and replace the values with your own b
 
 #MYSQL PROCEDURES
 
-some procedures are used so you'll have to connect to MySQL CLI to create them. These are the procedures:
+**remember, to connect to MYSQL CLI Docker containers and Springboot must be running with no errors that stops the execution**
+some procedures are used so you'll have to connect to MySQL CLI to create them. In Ubuntu 24.04.5 LTS you can connect using the command below:
+
+sudo docker exec -it mysqldb mysql -u root -p -h 127.0.0.1 -P 3306
+
+
+In any case, These are the procedures:
 
 DELIMITER $$
 
