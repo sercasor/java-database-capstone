@@ -10,6 +10,9 @@ Prerequisites: the following programs must be installed:
 
 Copy the contents of .env.example to .env and replace the values with your own before executing  docker compose up. To do that, change directory to app/docker. When the containers are up, change directory again to app/ and execute mvn spring-boot:run. 
 
+##JS API URL
+After launching the app, update the API base URL in your config.js to match the application URL.If you're running on local, leave as it is.
+
 #MYSQL PROCEDURES
 
 **remember, to connect to MYSQL CLI Docker containers and Springboot must be running with no errors that stops the execution**

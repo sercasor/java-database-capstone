@@ -82,7 +82,7 @@ public class PatientController {
 
     //login: The login credentials (email, password)
     @PostMapping("/login")
-    public  ResponseEntity<Map<String, String>>login(Login login){
+    public  ResponseEntity<Map<String, String>>login(@RequestBody Login login){
         return this.service.validatePatientLogin(login);
 
     }

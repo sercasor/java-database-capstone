@@ -11,6 +11,7 @@ import com.project.back_end.repo.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -163,6 +164,7 @@ public class Service {
         //check pass
         if(!patientDB.getPassword().equals(login.getPassword())){
             message="error with method validatePatientLogin: patient password doesn't match the one stored in DB";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", message));
         }
         return ResponseEntity.badRequest().body(Map.of("token",tokenService.generateToken(login.getIdentifier())));
 

@@ -8,6 +8,7 @@ import com.project.back_end.repo.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -73,12 +74,20 @@ public class PatientService {
     //The method checks if the provided patient ID matches the one decoded from the token (by email). If there's a mismatch, it returns an Unauthorized status.
     //If the IDs match, it retrieves the patient's appointments and returns them as a list of AppointmentDTO objects.
     public ResponseEntity<Map<String, Object>> getPatientAppointments(Long id, String token){
-
+        String message;
     try {
-        Optional<Patient> patientOptional=this.patientRepository.findById(id);
+        Optional<Patient> patientOptional = patientRepository.findById(id);
+
+        //verifies that a patient exists
+        if (patientOptional.isEmpty()) {
+            message= "Error in getPatientAppointments method: patient not found";
+            logger.error(message);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", message));
+        }
+        //checks that the patient's ID is the same as the logged-in user
         boolean patientIsAuthorized=patientOptional.get().getEmail().equals(this.tokenService.extractIdentifier(token));
         if(!patientIsAuthorized){
-            String message= "Error in getPatientAppointments method: unauthorized patient";
+            message= "Error in getPatientAppointments method: unauthorized patient";
             logger.error(message);
             return ResponseEntity.badRequest().body(Map.of("message", message));
         }
@@ -86,7 +95,7 @@ public class PatientService {
         return ResponseEntity.ok().body(Map.of("appointments",appointmentListToDTO(this.appointmentRepository.findByPatientId(id))));
 
     } catch (Exception e) {
-        String message=String.format("Error in getPatientAppointments method: %s",e.getMessage());
+        message=String.format("Error in getPatientAppointments method: %s",e.getMessage());
         logger.error(message);
         return ResponseEntity.badRequest().body(Map.of("message", message));
     }

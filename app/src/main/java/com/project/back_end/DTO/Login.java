@@ -1,6 +1,9 @@
 package com.project.back_end.DTO;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class Login {
+    @JsonAlias({"email", "username"}) // so requests can use email, username or identifier as the key without errors
     private String identifier; //email for  Doctor/Patient or userName for Admin
     private String password;//hashed before being stored and compared during authentication
 
