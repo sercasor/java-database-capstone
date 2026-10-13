@@ -1,5 +1,17 @@
 services:
-
+  #commented out since we're deploying on local
+  #app:
+  # build:
+  #   context: ..
+  #   dockerfile: Dockerfile
+  # container_name: back-end
+  # ports:
+  #   - "8080:8080"
+  # depends_on:
+  #   - mysql
+  #   - mongodb
+  # env_file:
+  #   - ./.env
   mongodb:
     #debug image: mongodb/mongodb-community-server:latest
     image: mongo:latest
