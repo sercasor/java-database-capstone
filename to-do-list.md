@@ -101,3 +101,8 @@ Now that you have coded this, you can take the following steps to continue impro
     Apply role-based access control (RBAC) to secure sensitive operations.
 
 These enhancements will make your application production-ready by ensuring only authorized users can access specific features.
+
+#dockerize
+
+creating a docker hub account to upload my image
+creating application.properties profiles so a Dockerfile can be used for both production and local (not working atm)
