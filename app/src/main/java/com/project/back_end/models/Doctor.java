@@ -1,5 +1,6 @@
 package com.project.back_end.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -27,6 +28,7 @@ public class Doctor {
 
     @NotNull(message = "Doctor's email is required")
     @Email //validates email format adequacy
+    @JsonAlias({"email", "username"}) // so requests can use email, username or identifier as the key without errors
     private String email;
 
     @NotNull(message = "Doctor's password is required")
@@ -42,7 +44,13 @@ public class Doctor {
     @ElementCollection(fetch = FetchType.EAGER) // ensures that the list of time slots is stored as a separate collection in the database.
     //Each time slot is represented as a string (e.g.: "09:00-10:00")
     private List<String> availableTimes;
+    /*-------------Public methods-------------*/
 
+    /**
+     * Constructor with no parameters
+     */
+    public Doctor() {
+    }
     /*-------------Getters and setters-------------*/
 
     public Long getId() {

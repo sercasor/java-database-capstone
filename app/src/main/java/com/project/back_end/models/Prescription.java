@@ -35,6 +35,12 @@ public class Prescription {
     /*-------------Constructors-------------*/
 
     /**
+     * No-parameter constructor
+     */
+    public Prescription() {
+    }
+
+    /**
      *  Parameterized constructor. The no-argument constructor is implicitly provided
      * @param id
      * @param patientName

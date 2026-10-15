@@ -1,6 +1,7 @@
 package com.project.back_end.models;
 
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -22,10 +23,19 @@ public class Admin {
     @NotNull(message = "username cannot be null")
     // to prevent the password from being exposed in JSON responses.
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonAlias({"email", "username"}) // so requests can use email, username or identifier as the key without errors
     private String username;
 
     @NotNull(message = "password cannot be null")
     private String password;
+
+    /*-------------Public methods-------------*/
+
+    /**
+     * Constructor with no parameters
+     */
+    public Admin() {
+    }
 
     /**
      * Parameterized constructor. The no-argument constructor is implicitly provided

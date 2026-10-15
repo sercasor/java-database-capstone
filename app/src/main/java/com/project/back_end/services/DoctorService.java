@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -179,7 +180,7 @@ public class DoctorService {
     /**
      * validates a doctor's login credentials
      * @param login login object contains email and password
-     * @return An HTTP message with either a 200 code or a 400 one
+     * @return A token provided login credentials match DB's or an HTTP message 400
      */
     @Transactional
     public ResponseEntity<Map<String, String>> validateDoctor(Login login){
@@ -187,11 +188,18 @@ public class DoctorService {
         String message; //value of the ResponseEntity <Map>. The key is "message"
         Doctor doctor=doctorRepository.findByEmail(login.getIdentifier());
 
-        if (doctor.getPassword().equals(login.getPassword())&&doctor.getEmail().equals(login.getIdentifier())){
-            message="Doctor is valid: Doctor's email and password  match login credentials";
-            return ResponseEntity.ok().body(Map.of("message", message));
+        //check if exists in DB
+        if (doctor == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+        }
 
-        }else{
+        //check credentials
+        if (doctor.getPassword().equals(login.getPassword())&&doctor.getEmail().equals(login.getIdentifier())) {
+            message= "Doctor login is valid, token generated";
+            logger.info(message);
+            return ResponseEntity.ok().body(Map.of("token",tokenService.generateToken(login.getIdentifier())));
+        } else{
             message="Doctor's email and/or password don't match login credentials";
             return ResponseEntity.badRequest().body(Map.of("message", message));
         }

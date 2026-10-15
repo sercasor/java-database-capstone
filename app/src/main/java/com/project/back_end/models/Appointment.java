@@ -58,6 +58,12 @@ public class Appointment {
     /*-------------Constructors-------------*/
 
     /**
+     * No-parameter constructor
+     */
+    public Appointment() {
+    }
+
+    /**
      * Parameterized constructor. The no-argument constructor is implicitly provided
      * @param id
      * @param doctor

@@ -92,7 +92,7 @@ public class DoctorController {
     }
     @PostMapping("/login")
     public  ResponseEntity<Map<String, String>>doctorLogin(
-            Login login
+            @RequestBody Login login
     ){
         return this.doctorService.validateDoctor(login);
 

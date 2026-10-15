@@ -1,5 +1,6 @@
 package com.project.back_end.models;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ public class Patient {
 
     @NotNull(message = "Email is required")
     @Email //validates email format adequacy
+    @JsonAlias({"email", "username"}) // so requests can use email, username or identifier as the key without errors
     private String email;
 
     @NotNull(message = "Password is required")
@@ -39,6 +41,15 @@ public class Patient {
     @Size(max = 255, message = "max address length is 255 characters")
     private String address;
 
+    /*-------------Public methods-------------*/
+
+
+
+    /**
+     * Constructor with no parameters
+     */
+    public Patient() {
+    }
     /*-------------Getters and setters-------------*/
 
     public Long getId() {
