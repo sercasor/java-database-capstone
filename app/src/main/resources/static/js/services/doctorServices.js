@@ -1,5 +1,5 @@
 
-import {API_BASE_URL} from "../config/config"
+import {API_BASE_URL} from "../config/config.js"
 //localhost:8080 basically
 
 //Doctor login endpoint

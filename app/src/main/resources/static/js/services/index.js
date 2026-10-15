@@ -1,5 +1,5 @@
-import {openModal} from "../components/modals"
-import {API_BASE_URL} from "../config/config"
+import {openModal} from "../components/modals.js"
+import {API_BASE_URL} from "../config/config.js"
 //localhost:8080 basically
 
 //Admin login endpoint
